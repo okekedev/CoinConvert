@@ -113,7 +113,7 @@ struct CalculatorView: View {
     }
 
     private func setOperation(_ operation: CalculatorOperation) {
-        if let current = currentOperation {
+        if currentOperation != nil {
             // Chain operations
             calculateResult()
         }

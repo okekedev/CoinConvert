@@ -4,7 +4,7 @@ import StoreKit
 struct SettingsView: View {
     @EnvironmentObject var exchangeRateManager: ExchangeRateManager
     @EnvironmentObject var storeManager: StoreManager
-    @State private var showPaywall = false
+    @Binding var selectedTab: Int
 
     var body: some View {
         NavigationView {
@@ -40,7 +40,7 @@ struct SettingsView: View {
                         }
 
                         Button(action: {
-                            showPaywall = true
+                            selectedTab = 0 // Go to Scan tab (locked scanner view)
                         }) {
                             HStack {
                                 Label("Upgrade to Pro", systemImage: "lock.open")
@@ -154,10 +154,6 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .sheet(isPresented: $showPaywall) {
-            PaywallView()
-                .environmentObject(storeManager)
-        }
     }
 }
 

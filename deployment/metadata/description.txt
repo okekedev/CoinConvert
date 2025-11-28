@@ -1,6 +1,6 @@
 Convert currencies instantly by pointing your camera at any price tag.
 
-Live Exchange makes currency conversion effortless while traveling. Simply point your camera at a price, and see the converted amount in real-time. No typing required.
+Real Time Currency Conversion makes traveling effortless. Simply point your camera at a price, and see the converted amount in real-time. No typing required.
 
 CAMERA SCANNING
 
@@ -27,9 +27,9 @@ See conversions update as you type
 • Easy Transfer
 Send scanned prices to the calculator with one tap
 
-40+ CURRENCIES SUPPORTED
+150+ CURRENCIES SUPPORTED
 
-USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN, BRL, KRW, SGD, HKD, NOK, SEK, DKK, NZD, ZAR, RUB, TRY, PLN, THB, IDR, MYR, PHP, CZK, ILS, CLP, COP, PEN, ARS, VND, EGP, PKR, NGN, BDT, UAH, RON, HUF, and more.
+USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN, BRL, KRW, SGD, HKD, NOK, SEK, DKK, NZD, ZAR, NGN, KES, EGP, AED, SAR, THB, PHP, IDR, VND, and many more.
 
 PERFECT FOR
 
@@ -57,4 +57,4 @@ ALWAYS UP TO DATE
 
 Update exchange rates with one tap when you have internet. Rates are cached for offline use so you're never stuck without conversions.
 
-Download Live Exchange and make your next trip stress-free.
+Download Real Time Currency Conversion and make your next trip stress-free.

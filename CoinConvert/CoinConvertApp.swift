@@ -12,6 +12,10 @@ struct CoinConvertApp: App {
                 .environmentObject(exchangeRateManager)
                 .environmentObject(currencyManager)
                 .environmentObject(storeManager)
+                .task {
+                    // Update rates once per day on app launch
+                    await exchangeRateManager.updateRatesIfNeeded()
+                }
         }
     }
 }

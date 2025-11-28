@@ -31,7 +31,7 @@ TESTING CALCULATOR:
 TESTING CURRENCY SELECTION:
 - Tap either currency flag in the header
 - Search or scroll to find currencies
-- 40+ currencies supported
+- 150+ currencies supported
 - Tap swap button to reverse conversion direction
 
 TESTING EXCHANGE RATES:
@@ -52,4 +52,10 @@ KNOWN LIMITATIONS:
 - Requires device with Neural Engine (iPhone XS or later)
 - Camera scanning works best with clear, printed text
 
-Thank you for reviewing Live Exchange!
+SUBSCRIPTION INFORMATION:
+- Pro subscription ($2.99/month) unlocks camera scanning
+- Free users have access to the calculator with currency conversion
+- 3-day free trial included for new subscribers
+- To test: tap "Start Free Trial" on the locked scanner screen
+
+Thank you for reviewing Real Time Currency Conversion!

@@ -58,7 +58,7 @@ struct ContentView: View {
             }
             .tag(1)
 
-            SettingsView()
+            SettingsView(selectedTab: $selectedTab)
                 .tabItem {
                     Image(systemName: "gear")
                     Text("Settings")
@@ -175,7 +175,6 @@ struct ScannerTab: View {
     @State private var isScanning = true
     @State private var scannedAmount: Double?
     @State private var convertedAmount: Double?
-    @State private var showPaywall = false
     @State private var showPurchaseError = false
     @State private var purchaseErrorMessage = ""
     @State private var showProductLoadError = false
@@ -199,10 +198,6 @@ struct ScannerTab: View {
             .navigationBarHidden(true)
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .sheet(isPresented: $showPaywall) {
-            PaywallView(onContinueToCalculator: onContinueToCalculator)
-                .environmentObject(storeManager)
-        }
         .onChange(of: scannedAmount) { _, newValue in
             if let amount = newValue {
                 convertedAmount = exchangeRateManager.convert(
@@ -300,8 +295,8 @@ struct ScannerTab: View {
                 .ignoresSafeArea()
 
             ScrollView {
-                VStack(spacing: 24) {
-                    Spacer().frame(height: 40)
+                VStack(spacing: 32) {
+                    Spacer().frame(height: 50)
 
                     // App logo
                     AppLogoView()
@@ -310,8 +305,8 @@ struct ScannerTab: View {
                         .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
 
                     // Title and description
-                    VStack(spacing: 8) {
-                        Text("Price Scanner")
+                    VStack(spacing: 12) {
+                        Text("Currency Conversion Pro")
                             .font(.system(size: 28, weight: .bold))
                             .foregroundColor(AppTheme.primaryText)
 
@@ -322,18 +317,17 @@ struct ScannerTab: View {
                             .lineSpacing(4)
                     }
 
-                    // Feature highlights
-                    VStack(alignment: .leading, spacing: 14) {
+                    // Feature highlights - centered
+                    VStack(spacing: 16) {
                         LockedFeatureRow(icon: "camera.fill", text: "Real-time camera scanning")
                         LockedFeatureRow(icon: "text.viewfinder", text: "Automatic price detection")
                         LockedFeatureRow(icon: "bolt.fill", text: "Instant currency conversion")
                     }
-                    .padding(.horizontal, 40)
-                    .padding(.top, 8)
+                    .frame(maxWidth: .infinity)
 
                     // Subscription section
                     if let product = storeManager.products.first {
-                        VStack(spacing: 8) {
+                        VStack(spacing: 10) {
                             Text("7-Day Free Trial")
                                 .font(.system(size: 22, weight: .bold))
                                 .foregroundColor(AppTheme.primaryText)
@@ -369,7 +363,7 @@ struct ScannerTab: View {
                                 }
                             }
                             .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 40)
                             .padding(.vertical, 16)
                             .background(
                                 LinearGradient(
@@ -381,10 +375,9 @@ struct ScannerTab: View {
                             .cornerRadius(AppTheme.cornerRadius)
                             .shadow(color: AppTheme.shadowColor, radius: 6, x: 0, y: 3)
                         }
-                        .padding(.horizontal, 40)
                         .disabled(storeManager.isLoading)
                     } else if showProductLoadError {
-                        VStack(spacing: 12) {
+                        VStack(spacing: 16) {
                             Text("Unable to load subscription")
                                 .font(.system(size: 15, weight: .semibold))
                                 .foregroundColor(AppTheme.secondaryText)
@@ -402,8 +395,8 @@ struct ScannerTab: View {
                                 Text("Retry")
                                     .font(.system(size: 17, weight: .semibold))
                                     .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 16)
+                                    .padding(.horizontal, 40)
+                                    .padding(.vertical, 14)
                                     .background(
                                         LinearGradient(
                                             colors: [AppTheme.gold, AppTheme.darkGold],
@@ -413,7 +406,6 @@ struct ScannerTab: View {
                                     )
                                     .cornerRadius(AppTheme.cornerRadius)
                             }
-                            .padding(.horizontal, 40)
                         }
                     } else {
                         ProgressView()
@@ -439,6 +431,7 @@ struct ScannerTab: View {
                             .foregroundColor(AppTheme.secondaryText)
                     }
                     .disabled(storeManager.isLoading)
+                    .padding(.top, 8)
 
                     // Privacy & Terms links
                     HStack(spacing: 12) {
@@ -453,6 +446,7 @@ struct ScannerTab: View {
                             .font(.system(size: 11))
                             .foregroundColor(AppTheme.secondaryText.opacity(0.7))
                     }
+                    .padding(.top, 8)
 
                     // Continue to calculator button
                     Button(action: {
@@ -466,7 +460,7 @@ struct ScannerTab: View {
                         }
                         .foregroundColor(AppTheme.blue)
                     }
-                    .padding(.top, 8)
+                    .padding(.top, 16)
 
                     // Secret unlock dots
                     HStack(spacing: 24) {
@@ -481,6 +475,7 @@ struct ScannerTab: View {
                                 }
                         }
                     }
+                    .padding(.top, 8)
                     .padding(.bottom, 30)
                 }
             }
@@ -509,6 +504,10 @@ struct ScannerTab: View {
                 Task {
                     await storeManager.updateProStatus()
                 }
+
+                // Ensure scanner starts unpaused
+                isScanning = true
+
                 secretTapCount = 0
             }
         } else {
@@ -550,7 +549,7 @@ struct LockedFeatureRow: View {
     let text: String
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 10) {
             Image(systemName: icon)
                 .font(.system(size: 16))
                 .foregroundColor(AppTheme.gold)
@@ -559,8 +558,6 @@ struct LockedFeatureRow: View {
             Text(text)
                 .font(.system(size: 15))
                 .foregroundColor(AppTheme.secondaryText)
-
-            Spacer()
         }
     }
 }
@@ -647,5 +644,124 @@ struct CalculatorTab: View {
             return String(format: "%.0f", number)
         }
         return String(format: "%.2f", number)
+    }
+}
+
+// MARK: - Falling Item Model
+struct FallingItem: Identifiable {
+    let id = UUID()
+    var symbol: String
+    var position: CGPoint
+    var size: CGFloat
+    var speed: CGFloat
+    var opacity: Double
+}
+
+// MARK: - Falling Flags Background (Canvas-based for performance)
+struct FallingFlagsView: View {
+    @State private var items: [FallingItem] = []
+
+    // Currency flags and symbols to display
+    private let symbols: [String] = [
+        "🇺🇸", "🇪🇺", "🇬🇧", "🇯🇵", "🇨🇦", "🇦🇺", "🇨🇭", "🇨🇳",
+        "🇮🇳", "🇧🇷", "🇲🇽", "🇰🇷", "🇸🇬", "🇭🇰", "🇳🇿", "🇸🇪",
+        "🇳🇴", "🇩🇰", "🇿🇦", "🇹🇭", "🇵🇭", "🇮🇩", "🇲🇾", "🇻🇳",
+        "$", "€", "£", "¥", "₹", "₩", "₽", "₿", "💰", "💵", "💴", "💶", "💷"
+    ]
+
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                TimelineView(.animation) { timeline in
+                    Canvas { context, size in
+                        for item in items {
+                            context.opacity = item.opacity
+                            context.draw(
+                                Text(item.symbol).font(.system(size: item.size)),
+                                at: item.position
+                            )
+                        }
+                    }
+                    .onChange(of: timeline.date) {
+                        updateItems(in: geometry.size)
+                    }
+                }
+
+                // White gradient overlay for softer look
+                LinearGradient(
+                    colors: [
+                        Color(.systemBackground).opacity(0.15),
+                        Color(.systemBackground).opacity(0.05),
+                        Color(.systemBackground).opacity(0.15)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+        }
+        .onAppear {
+            items = createInitialItems(in: UIScreen.main.bounds.size)
+        }
+    }
+
+    private func createInitialItems(in size: CGSize) -> [FallingItem] {
+        var initialItems: [FallingItem] = []
+        for _ in 0..<40 {
+            initialItems.append(createItem(in: size, isInitial: true))
+        }
+        return initialItems
+    }
+
+    private func createItem(in size: CGSize, isInitial: Bool = false) -> FallingItem {
+        let symbol = symbols.randomElement()!
+        let x = CGFloat.random(in: 0...size.width)
+        let y = isInitial ? CGFloat.random(in: 0...size.height) : -30
+        let itemSize = CGFloat.random(in: 18...35)
+        let speed = CGFloat.random(in: 0.8...2.5)
+        let opacity = Double.random(in: 0.08...0.18)
+
+        return FallingItem(
+            symbol: symbol,
+            position: CGPoint(x: x, y: y),
+            size: itemSize,
+            speed: speed,
+            opacity: opacity
+        )
+    }
+
+    private func updateItems(in size: CGSize) {
+        for i in 0..<items.count {
+            items[i].position.y += items[i].speed
+
+            // Reset item if it goes off screen
+            if items[i].position.y > size.height + 30 {
+                items[i] = createItem(in: size)
+            }
+        }
+
+        // Add new items periodically
+        if items.count < 60 && Int.random(in: 0...15) == 0 {
+            items.append(createItem(in: size))
+        }
+    }
+}
+
+// MARK: - App Logo View
+struct AppLogoView: View {
+    var body: some View {
+        if let uiImage = UIImage(named: "AppLogo") {
+            Image(uiImage: uiImage)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+        } else {
+            // Debug: show red box if image fails to load
+            RoundedRectangle(cornerRadius: 22)
+                .fill(Color.red)
+                .overlay(
+                    Text("IMG\nFAIL")
+                        .font(.caption)
+                        .foregroundColor(.white)
+                )
+        }
     }
 }

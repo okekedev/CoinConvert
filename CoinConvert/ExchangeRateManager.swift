@@ -8,7 +8,11 @@ class ExchangeRateManager: ObservableObject {
     @Published var updateSuccess: Bool = false
 
     private let storageKey = "com.coinconvert.exchangerates"
+    private let lastUpdateKey = "com.coinconvert.lastupdate"
     private let userDefaults = UserDefaults.standard
+
+    // Minimum time between automatic updates (24 hours)
+    private let updateInterval: TimeInterval = 24 * 60 * 60
 
     init() {
         if let data = userDefaults.data(forKey: storageKey),
@@ -19,6 +23,18 @@ class ExchangeRateManager: ObservableObject {
         }
     }
 
+    /// Check if enough time has passed since the last update
+    private var shouldAutoUpdate: Bool {
+        let lastUpdate = userDefaults.object(forKey: lastUpdateKey) as? Date ?? .distantPast
+        return Date().timeIntervalSince(lastUpdate) >= updateInterval
+    }
+
+    /// Called when app opens - only updates if 24+ hours have passed
+    func updateRatesIfNeeded() async {
+        guard shouldAutoUpdate else { return }
+        await updateRates()
+    }
+
     func convert(amount: Double, from source: Currency, to destination: Currency) -> Double? {
         return exchangeRates.convert(amount: amount, from: source.code, to: destination.code)
     }
@@ -27,6 +43,10 @@ class ExchangeRateManager: ObservableObject {
         if let data = try? JSONEncoder().encode(exchangeRates) {
             userDefaults.set(data, forKey: storageKey)
         }
+    }
+
+    private func recordUpdateTime() {
+        userDefaults.set(Date(), forKey: lastUpdateKey)
     }
 
     func updateRates() async {
@@ -41,6 +61,7 @@ class ExchangeRateManager: ObservableObject {
             await MainActor.run {
                 self.exchangeRates = rates
                 self.saveRates()
+                self.recordUpdateTime()
                 self.isUpdating = false
                 self.updateSuccess = true
             }

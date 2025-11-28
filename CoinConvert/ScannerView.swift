@@ -45,8 +45,8 @@ struct ScannerView: View {
 
                 // Text highlight overlays (only show when active)
                 if isActive {
-                    ForEach(cameraManager.recognizedTextBoxes, id: \.self) { box in
-                        TextHighlightBox(boundingBox: box, viewSize: geometry.size)
+                    ForEach(cameraManager.recognizedTextBoxes) { item in
+                        TextHighlightBox(boundingBox: item.rect, viewSize: geometry.size)
                     }
                 }
 
@@ -165,10 +165,16 @@ struct TextHighlightBox: View {
     }
 }
 
+// MARK: - Identifiable Rect Wrapper
+struct IdentifiableRect: Identifiable {
+    let id = UUID()
+    let rect: CGRect
+}
+
 // MARK: - Camera Manager
 class CameraManager: NSObject, ObservableObject {
     @Published var recognizedAmount: Double?
-    @Published var recognizedTextBoxes: [CGRect] = []
+    @Published var recognizedTextBoxes: [IdentifiableRect] = []
 
     let captureSession = AVCaptureSession()
     private let videoOutput = AVCaptureVideoDataOutput()
@@ -456,7 +462,7 @@ class CameraManager: NSObject, ObservableObject {
         }
 
         DispatchQueue.main.async { [weak self] in
-            self?.recognizedTextBoxes = boxes
+            self?.recognizedTextBoxes = boxes.map { IdentifiableRect(rect: $0) }
             if let amount = bestAmount {
                 self?.recognizedAmount = amount
             }
