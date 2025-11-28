@@ -1,0 +1,1 @@
+currency,converter,exchange,rate,scanner,camera,travel,money,foreign,live,prices,calculator

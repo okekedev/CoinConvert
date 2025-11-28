@@ -1,0 +1,29 @@
+Live Exchange - Project Configuration
+
+Project Name: CoinConvert
+Bundle ID: com.christianokeke.liveexchange
+App Store Name: Live Exchange - Real-time Currency Converter
+Project Path: ~/Desktop/CoinConvert
+Xcode Project: CoinConvert.xcodeproj
+
+Build Settings:
+- Automatically manage signing = YES
+- Team = Christian Okeke (TUG3BHLSM4)
+- Deployment Target = iOS 16.0
+
+Capabilities Required:
+- Camera Usage (for price scanning)
+
+To build:
+cd ~/Desktop/AppStoreDeployment && ./scripts/build.sh
+
+To upload:
+cd ~/Desktop/AppStoreDeployment && ./scripts/upload.sh
+
+Configuration File:
+~/Desktop/AppStoreDeployment/config.sh
+
+Before building:
+1. Update config.sh with CoinConvert settings
+2. Register bundle ID in Apple Developer Portal
+3. Create app in App Store Connect

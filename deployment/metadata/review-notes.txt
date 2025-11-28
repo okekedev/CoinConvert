@@ -1,0 +1,55 @@
+APP REVIEW INFORMATION
+
+TESTING THE APP:
+
+No account or login required. The app works entirely offline after initial exchange rate download.
+
+REQUIRED PERMISSIONS:
+- Camera Access: Required for scanning price tags. The app will request permission on first use of the scanner.
+
+BASIC WORKFLOW TO TEST:
+1. Grant Camera access when prompted
+2. Point camera at any price tag or number
+3. The app will automatically recognize and convert the price
+4. Tap on highlighted text to select specific prices
+5. Use the Calculator tab for manual entry
+6. Tap "Calculator" button to send scanned amount to calculator
+
+TESTING SCANNER:
+- Point camera at any printed price (newspaper, receipt, menu, etc.)
+- Gold brackets show the scan region
+- Recognized text is highlighted
+- Conversion appears automatically in the header
+- Tap on specific highlighted price to select it
+
+TESTING CALCULATOR:
+- Enter any amount using the keypad
+- Conversion updates in real-time
+- Use % button for percentage calculations
+- Tap currency flags to change source/destination currencies
+
+TESTING CURRENCY SELECTION:
+- Tap either currency flag in the header
+- Search or scroll to find currencies
+- 40+ currencies supported
+- Tap swap button to reverse conversion direction
+
+TESTING EXCHANGE RATES:
+- Go to Settings tab
+- Tap "Update Rates Now" to fetch latest rates
+- Rates are cached for offline use
+- Last updated timestamp shown
+
+PRIVACY & DATA:
+- Camera feed is processed on-device only
+- No images are stored or uploaded
+- No accounts or personal data collected
+- No analytics or tracking
+- Exchange rates fetched from open.er-api.com (free public API)
+
+KNOWN LIMITATIONS:
+- Requires iOS 16 or later (VisionKit DataScanner requirement)
+- Requires device with Neural Engine (iPhone XS or later)
+- Camera scanning works best with clear, printed text
+
+Thank you for reviewing Live Exchange!

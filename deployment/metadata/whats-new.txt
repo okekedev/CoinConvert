@@ -1,0 +1,7 @@
+Initial release of Live Exchange!
+
+• Camera scanning for instant price conversion
+• Support for 40+ world currencies
+• Built-in calculator with live conversion
+• Offline exchange rates
+• Clean, intuitive interface
