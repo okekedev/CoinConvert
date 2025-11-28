@@ -168,14 +168,14 @@ struct PaywallView: View {
 
                     // Privacy & Terms links
                     HStack(spacing: 12) {
-                        Link("Privacy Policy", destination: URL(string: "https://okekedev.github.io/LiveExchange/privacy.html")!)
+                        Link("Privacy Policy", destination: URL(string: "https://okekedev.github.io/CoinConvert/privacy.html")!)
                             .font(.system(size: 11))
                             .foregroundColor(.white.opacity(0.6))
 
                         Text("•")
                             .foregroundColor(.white.opacity(0.4))
 
-                        Link("Terms of Use", destination: URL(string: "https://okekedev.github.io/LiveExchange/terms.html")!)
+                        Link("Terms of Use", destination: URL(string: "https://okekedev.github.io/CoinConvert/terms.html")!)
                             .font(.system(size: 11))
                             .foregroundColor(.white.opacity(0.6))
                     }

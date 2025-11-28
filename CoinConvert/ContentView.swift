@@ -442,14 +442,14 @@ struct ScannerTab: View {
 
                     // Privacy & Terms links
                     HStack(spacing: 12) {
-                        Link("Privacy Policy", destination: URL(string: "https://okekedev.github.io/LiveExchange/privacy.html")!)
+                        Link("Privacy Policy", destination: URL(string: "https://okekedev.github.io/CoinConvert/privacy.html")!)
                             .font(.system(size: 11))
                             .foregroundColor(AppTheme.secondaryText.opacity(0.7))
 
                         Text("•")
                             .foregroundColor(AppTheme.secondaryText.opacity(0.5))
 
-                        Link("Terms of Use", destination: URL(string: "https://okekedev.github.io/LiveExchange/terms.html")!)
+                        Link("Terms of Use", destination: URL(string: "https://okekedev.github.io/CoinConvert/terms.html")!)
                             .font(.system(size: 11))
                             .foregroundColor(AppTheme.secondaryText.opacity(0.7))
                     }
