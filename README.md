@@ -1,4 +1,4 @@
-# Real Time Currency Conversion
+# Tagwise — Scan Prices Abroad
 
 Convert currencies instantly by pointing your camera at any price tag.
 

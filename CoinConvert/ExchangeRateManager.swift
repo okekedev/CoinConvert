@@ -89,18 +89,10 @@ class ExchangeRateManager: ObservableObject {
 
         let apiResponse = try JSONDecoder().decode(ExchangeRateAPIResponse.self, from: data)
 
-        let rates: [String: Double]
-        let baseCurrency: String
-
-        if let conversionRates = apiResponse.conversion_rates,
-           let baseCode = apiResponse.base_code {
-            rates = conversionRates
-            baseCurrency = baseCode
-        } else if let apiRates = apiResponse.rates,
-                  let base = apiResponse.base {
-            rates = apiRates
-            baseCurrency = base
-        } else {
+        // open.er-api.com returns `base_code` + `rates`; other providers use
+        // `conversion_rates` or `base`, so accept any pairing.
+        guard let rates = apiResponse.conversion_rates ?? apiResponse.rates,
+              let baseCurrency = apiResponse.base_code ?? apiResponse.base else {
             throw ExchangeRateError.invalidData
         }
 

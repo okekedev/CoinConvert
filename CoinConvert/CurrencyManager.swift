@@ -42,6 +42,19 @@ class CurrencyManager: ObservableObject {
         userDefaults.set(destinationCurrency.code, forKey: destinationKey)
     }
 
+    /// Free users can scan this pair (either direction) without Pro.
+    static let freeScanPair: Set<String> = ["GBP", "AUD"]
+
+    var isFreeScanPair: Bool {
+        [sourceCurrency.code, destinationCurrency.code].allSatisfy(Self.freeScanPair.contains)
+            && sourceCurrency.code != destinationCurrency.code
+    }
+
+    func selectFreeScanPair() {
+        if let gbp = Currency.currency(for: "GBP") { setSourceCurrency(gbp) }
+        if let aud = Currency.currency(for: "AUD") { setDestinationCurrency(aud) }
+    }
+
     func detectCurrency(from symbol: String) -> Currency? {
         let matches = Currency.currencyBySymbol(symbol)
         if matches.count == 1 {

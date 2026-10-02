@@ -1,71 +1,107 @@
 import SwiftUI
+import StoreKit
 
 struct ContentView: View {
     @EnvironmentObject var exchangeRateManager: ExchangeRateManager
     @EnvironmentObject var currencyManager: CurrencyManager
-    @State private var selectedTab = 0
+    @EnvironmentObject var storeManager: StoreManager
+    // Calculator is the home screen. Launch arg `-initialTab N` opens another tab for screenshots.
+    @State private var selectedTab = UserDefaults.standard.integer(forKey: "initialTab")
 
     // Shared state between tabs
     @State private var capturedAmount: Double?
     @State private var capturedConverted: Double?
-
-    init() {
-        // Configure tab bar appearance - white background
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.white
-
-        // Unselected items - gray
-        appearance.stackedLayoutAppearance.normal.iconColor = UIColor.systemGray
-        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.systemGray]
-
-        // Selected items - gold
-        let goldColor = UIColor(red: 212/255, green: 175/255, blue: 55/255, alpha: 1)
-        appearance.stackedLayoutAppearance.selected.iconColor = goldColor
-        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: goldColor]
-
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
+    @AppStorage(OnboardingState.key) private var hasOnboarded = false
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            ScannerTab(
-                capturedAmount: $capturedAmount,
-                capturedConverted: $capturedConverted,
-                onCapture: { amount, converted in
-                    capturedAmount = amount
-                    capturedConverted = converted
-                    selectedTab = 1 // Switch to calculator tab
-                },
-                onContinueToCalculator: {
-                    selectedTab = 1 // Switch to calculator tab
-                }
-            )
-            .tabItem {
-                Image(systemName: "camera.viewfinder")
-                Text("Scan")
-            }
-            .tag(0)
-
             CalculatorTab(
                 initialAmount: $capturedAmount,
                 initialConverted: $capturedConverted
             )
-            .tabItem {
-                Image(systemName: "plus.forwardslash.minus")
-                Text("Calculator")
-            }
-            .tag(1)
+            .toolbar(.hidden, for: .tabBar)
+            .safeAreaPadding(.bottom, AppTabBar.reservedHeight)
+            .tag(AppTab.calculator)
+
+            ScannerTab(
+                onContinueToCalculator: {
+                    selectedTab = AppTab.calculator
+                }
+            )
+            .toolbar(.hidden, for: .tabBar)
+            .safeAreaPadding(.bottom, AppTabBar.reservedHeight)
+            .tag(AppTab.scan)
 
             SettingsView(selectedTab: $selectedTab)
-                .tabItem {
-                    Image(systemName: "gear")
-                    Text("Settings")
-                }
-                .tag(2)
+                .toolbar(.hidden, for: .tabBar)
+                .safeAreaPadding(.bottom, AppTabBar.reservedHeight)
+                .tag(AppTab.settings)
+        }
+        // Custom bar: icons only, in the app's navy and gold. Each tab reserves
+        // room for it with safeAreaPadding so nothing sits underneath.
+        .overlay(alignment: .bottom) {
+            AppTabBar(selection: $selectedTab)
         }
         .tint(AppTheme.gold)
+        .fullScreenCover(isPresented: Binding(get: { !hasOnboarded }, set: { hasOnboarded = !$0 })) {
+            OnboardingView {
+                // Start on the free pair so the scanner works right away.
+                if !storeManager.isPro {
+                    currencyManager.selectFreeScanPair()
+                }
+                // Onboarding ends on the camera, so land where it works.
+                selectedTab = AppTab.scan
+                hasOnboarded = true
+            }
+            .environmentObject(exchangeRateManager)
+        }
+    }
+}
+
+// MARK: - Tab Bar
+
+/// Tab indices, in the order shown in the bar.
+enum AppTab {
+    static let calculator = 0
+    static let scan = 1
+    static let settings = 2
+}
+
+/// Floating navy capsule with icon-only tabs; the selected one sits in a gold circle.
+struct AppTabBar: View {
+    @Binding var selection: Int
+
+    /// Bar height (66) plus its bottom gap, reserved at the bottom of every tab.
+    static let reservedHeight: CGFloat = 74
+
+    private let tabs: [(icon: String, label: String)] = [
+        ("plus.forwardslash.minus", "Calculator"),
+        ("camera.viewfinder", "Scan"),
+        ("gearshape.fill", "Settings"),
+    ]
+
+    var body: some View {
+        HStack(spacing: 28) {
+            ForEach(tabs.indices, id: \.self) { index in
+                let isSelected = selection == index
+                Button(action: {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { selection = index }
+                }) {
+                    Image(systemName: tabs[index].icon)
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(isSelected ? AppTheme.darkBlue : .white.opacity(0.65))
+                        .frame(width: 50, height: 50)
+                        .background(Circle().fill(isSelected ? AppTheme.gold : .clear))
+                }
+                .accessibilityLabel(tabs[index].label)
+                .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : .isButton)
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+        .background(AppTheme.darkBlue, in: Capsule())
+        .shadow(color: .black.opacity(0.2), radius: 12, x: 0, y: 4)
+        .padding(.bottom, 4)
     }
 }
 
@@ -77,6 +113,9 @@ struct CurrencyConversionHeader: View {
     let convertedAmount: Double
     var onSourceTap: (() -> Void)?
     var onDestinationTap: (() -> Void)?
+    /// Override what happens when a currency is picked (e.g. to gate it behind Pro).
+    var selectSource: ((Currency) -> Void)?
+    var selectDestination: ((Currency) -> Void)?
 
     @State private var showingSourcePicker = false
     @State private var showingDestinationPicker = false
@@ -104,7 +143,7 @@ struct CurrencyConversionHeader: View {
             .sheet(isPresented: $showingSourcePicker) {
                 CurrencyListView(selectedCurrency: Binding(
                     get: { currencyManager.sourceCurrency },
-                    set: { currencyManager.setSourceCurrency($0) }
+                    set: { selectSource?($0) ?? currencyManager.setSourceCurrency($0) }
                 ))
             }
 
@@ -140,7 +179,7 @@ struct CurrencyConversionHeader: View {
             .sheet(isPresented: $showingDestinationPicker) {
                 CurrencyListView(selectedCurrency: Binding(
                     get: { currencyManager.destinationCurrency },
-                    set: { currencyManager.setDestinationCurrency($0) }
+                    set: { selectDestination?($0) ?? currencyManager.setDestinationCurrency($0) }
                 ))
             }
         }
@@ -167,9 +206,6 @@ struct ScannerTab: View {
     @EnvironmentObject var currencyManager: CurrencyManager
     @EnvironmentObject var storeManager: StoreManager
 
-    @Binding var capturedAmount: Double?
-    @Binding var capturedConverted: Double?
-    var onCapture: (Double, Double?) -> Void
     var onContinueToCalculator: () -> Void
 
     @State private var isScanning = true
@@ -178,6 +214,13 @@ struct ScannerTab: View {
     @State private var showPurchaseError = false
     @State private var purchaseErrorMessage = ""
     @State private var showProductLoadError = false
+    @State private var selectedProductID = StoreManager.monthlyID
+    @State private var trialEligibleIDs: Set<String> = []
+    @State private var showExitOffer = false
+    @State private var showPaywallSheet = false
+    @State private var afterExitOffer: (() -> Void)?
+    @Environment(\.requestReview) private var requestReview
+    @AppStorage("exitOfferLastShown") private var exitOfferLastShown: Double = 0
 
     // Secret unlock sequence: Left button 4 times
     @State private var secretTapCount: Int = 0
@@ -186,8 +229,8 @@ struct ScannerTab: View {
     var body: some View {
         NavigationView {
             Group {
-                if storeManager.isPro {
-                    // Pro user - show scanner
+                if storeManager.isPro || currencyManager.isFreeScanPair {
+                    // Pro user, or free user on the free GBP <-> AUD pair
                     scannerContent
                 } else {
                     // Free user - show locked view with subscription
@@ -205,6 +248,9 @@ struct ScannerTab: View {
                     from: currencyManager.sourceCurrency,
                     to: currencyManager.destinationCurrency
                 )
+                if ReviewPrompt.recordSuccessfulScan() {
+                    requestReview()
+                }
             }
         }
         .onChange(of: currencyManager.sourceCurrency) { _, _ in
@@ -225,70 +271,72 @@ struct ScannerTab: View {
                 )
             }
         }
+        .sheet(isPresented: $showPaywallSheet, onDismiss: {
+            if !storeManager.isPro { continueOrShowExitOffer() }
+        }) {
+            paywallView(inSheet: true)
+                .onChange(of: storeManager.isPro) { _, isPro in
+                    if isPro { showPaywallSheet = false }
+                }
+        }
+        .sheet(isPresented: $showExitOffer, onDismiss: {
+            if !storeManager.isPro { afterExitOffer?() }
+            afterExitOffer = nil
+        }) {
+            if let regular = storeManager.lifetimeProduct, let offer = storeManager.lifetimeOfferProduct {
+                ExitOfferView(regular: regular, offer: offer) {
+                    Task {
+                        do {
+                            if try await storeManager.purchase(offer) { showExitOffer = false }
+                        } catch {
+                            purchaseErrorMessage = "Unable to complete purchase. Please try again."
+                            showPurchaseError = true
+                        }
+                    }
+                } onDecline: {
+                    showExitOffer = false
+                }
+                .environmentObject(storeManager)
+            }
+        }
+        .alert("Purchase Error", isPresented: $showPurchaseError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(purchaseErrorMessage)
+        }
     }
 
     // MARK: - Scanner Content (Pro users)
     private var scannerContent: some View {
-        VStack(spacing: 0) {
-            // Currency conversion header
-            CurrencyConversionHeader(
-                sourceAmount: scannedAmount ?? 0,
-                convertedAmount: convertedAmount ?? 0
+        VStack(spacing: 14) {
+            // Big result on top; the camera only needs to fit the price
+            ScanReadout(
+                sourceAmount: scannedAmount,
+                convertedAmount: convertedAmount,
+                selectSource: { selectScanCurrency($0, isSource: true) },
+                selectDestination: { selectScanCurrency($0, isSource: false) }
             )
-            .padding(.horizontal)
-            .padding(.top, 8)
+            .frame(height: 240)
 
-            // Camera view
             ScannerView(
                 scannedAmount: $scannedAmount,
                 convertedAmount: $convertedAmount,
                 isActive: isScanning
             )
-            .cornerRadius(AppTheme.cornerRadius)
-            .padding(.horizontal)
-            .padding(.top, 12)
-            .padding(.bottom, 16)
-
-            // Bottom controls - side by side buttons
-            HStack(spacing: 12) {
-                // Pause/Resume button
-                stopButton
-
-                // Use in Calculator button
-                Button(action: {
-                    if let amount = scannedAmount {
-                        onCapture(amount, convertedAmount)
-                    }
-                }) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "arrow.right.circle.fill")
-                        Text("Calculator")
-                    }
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(
-                        LinearGradient(
-                            colors: scannedAmount != nil
-                                ? [AppTheme.blue, AppTheme.darkBlue]
-                                : [Color.gray.opacity(0.5), Color.gray.opacity(0.4)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .cornerRadius(AppTheme.cornerRadius)
-                    .shadow(color: AppTheme.shadowColor, radius: 4, x: 0, y: 2)
-                }
-                .disabled(scannedAmount == nil)
-            }
-            .padding(.horizontal)
-            .padding(.bottom, 20)
+            .frame(minHeight: 300)
+            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
         }
+        .padding(.horizontal)
+        .padding(.top, 8)
+        .padding(.bottom, 16)
     }
 
-    // MARK: - Locked Scanner View (Free users)
-    private var lockedScannerView: some View {
+    // MARK: - Paywall
+    /// Shown inline when a free user's pair isn't GBP <-> AUD (e.g. changed in the
+    /// calculator), and as a sheet when they pick another currency in the scanner.
+    private var lockedScannerView: some View { paywallView(inSheet: false) }
+
+    private func paywallView(inSheet: Bool) -> some View {
         ZStack {
             // Falling flags background
             FallingFlagsView()
@@ -304,45 +352,27 @@ struct ScannerTab: View {
                         .clipShape(RoundedRectangle(cornerRadius: 22))
                         .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
 
-                    // Title and description
-                    VStack(spacing: 12) {
-                        Text("Currency Conversion Pro")
-                            .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(AppTheme.primaryText)
+                    Text("Unlock every currency")
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundColor(AppTheme.primaryText)
+                        .multilineTextAlignment(.center)
 
-                        Text("Point your camera at any price tag\nand instantly convert currencies")
-                            .font(.system(size: 16))
-                            .foregroundColor(AppTheme.secondaryText)
-                            .multilineTextAlignment(.center)
-                            .lineSpacing(4)
-                    }
-
-                    // Feature highlights - centered
-                    VStack(spacing: 16) {
-                        LockedFeatureRow(icon: "camera.fill", text: "Real-time camera scanning")
-                        LockedFeatureRow(icon: "text.viewfinder", text: "Automatic price detection")
-                        LockedFeatureRow(icon: "bolt.fill", text: "Instant currency conversion")
-                    }
-                    .frame(maxWidth: .infinity)
-
-                    // Subscription section
-                    if let product = storeManager.products.first {
+                    // Plan picker
+                    if let product = selectedProduct {
                         VStack(spacing: 10) {
-                            Text("7-Day Free Trial")
-                                .font(.system(size: 22, weight: .bold))
-                                .foregroundColor(AppTheme.primaryText)
-
-                            Text("Then \(product.displayPrice)/month")
-                                .font(.system(size: 15))
-                                .foregroundColor(AppTheme.secondaryText)
-
-                            Text("Cancel anytime")
-                                .font(.system(size: 13))
-                                .foregroundColor(AppTheme.secondaryText.opacity(0.7))
+                            ForEach(storeManager.planProducts, id: \.id) { option in
+                                PlanOptionRow(
+                                    product: option,
+                                    badge: planBadge(for: option),
+                                    isSelected: option.id == product.id
+                                )
+                                .onTapGesture { selectedProductID = option.id }
+                            }
                         }
+                        .padding(.horizontal, 24)
                         .padding(.top, 8)
 
-                        // Subscribe button
+                        // Purchase button
                         Button(action: {
                             Task {
                                 do {
@@ -358,7 +388,7 @@ struct ScannerTab: View {
                                     ProgressView()
                                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
                                 } else {
-                                    Text("Start Free Trial")
+                                    Text(purchaseButtonTitle(for: product))
                                         .font(.system(size: 18, weight: .bold))
                                 }
                             }
@@ -376,6 +406,12 @@ struct ScannerTab: View {
                             .shadow(color: AppTheme.shadowColor, radius: 6, x: 0, y: 3)
                         }
                         .disabled(storeManager.isLoading)
+
+                        Text(purchaseDisclosure(for: product))
+                            .font(.system(size: 11))
+                            .foregroundColor(AppTheme.secondaryText.opacity(0.8))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 32)
                     } else if showProductLoadError {
                         VStack(spacing: 16) {
                             Text("Unable to load subscription")
@@ -420,6 +456,23 @@ struct ScannerTab: View {
                             }
                     }
 
+                    if inSheet {
+                        Button("Not now") { showPaywallSheet = false }
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(AppTheme.blue)
+                    } else {
+                        Button(action: {
+                            currencyManager.selectFreeScanPair()
+                        }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "camera.viewfinder")
+                                Text("Scan free with GBP ↔ AUD")
+                            }
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(AppTheme.blue)
+                        }
+                    }
+
                     // Restore purchases
                     Button(action: {
                         Task {
@@ -448,43 +501,122 @@ struct ScannerTab: View {
                     }
                     .padding(.top, 8)
 
-                    // Continue to calculator button
-                    Button(action: {
-                        onContinueToCalculator()
-                    }) {
-                        HStack(spacing: 8) {
-                            Text("Continue to Calculator")
-                                .font(.system(size: 16, weight: .medium))
-                            Image(systemName: "arrow.right")
-                                .font(.system(size: 14, weight: .medium))
+                    if !inSheet {
+                        // Continue to calculator button
+                        Button(action: {
+                            continueOrShowExitOffer(then: onContinueToCalculator)
+                        }) {
+                            HStack(spacing: 8) {
+                                Text("Continue to Calculator")
+                                    .font(.system(size: 16, weight: .medium))
+                                Image(systemName: "arrow.right")
+                                    .font(.system(size: 14, weight: .medium))
+                            }
+                            .foregroundColor(AppTheme.blue)
                         }
-                        .foregroundColor(AppTheme.blue)
-                    }
-                    .padding(.top, 16)
+                        .padding(.top, 16)
 
-                    // Secret unlock dots
-                    HStack(spacing: 24) {
-                        ForEach(0..<3, id: \.self) { index in
-                            Circle()
-                                .fill(AppTheme.blue)
-                                .frame(width: 10, height: 10)
-                                .frame(width: 44, height: 44)
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    handleSecretTap(index)
-                                }
+                        // Secret unlock dots
+                        HStack(spacing: 24) {
+                            ForEach(0..<3, id: \.self) { index in
+                                Circle()
+                                    .fill(AppTheme.blue)
+                                    .frame(width: 10, height: 10)
+                                    .frame(width: 44, height: 44)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        handleSecretTap(index)
+                                    }
+                            }
                         }
+                        .padding(.top, 8)
+                        .padding(.bottom, 30)
                     }
-                    .padding(.top, 8)
-                    .padding(.bottom, 30)
                 }
             }
         }
-        .alert("Purchase Error", isPresented: $showPurchaseError) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(purchaseErrorMessage)
+        .task(id: storeManager.products.map(\.id)) {
+            await loadTrialEligibility()
         }
+    }
+
+    // MARK: - Plan Helpers
+    private var selectedProduct: Product? {
+        storeManager.planProducts.first { $0.id == selectedProductID } ?? storeManager.planProducts.first
+    }
+
+    private func planBadge(for product: Product) -> String? {
+        switch product.id {
+        case StoreManager.monthlyID: return "Most Popular"
+        case StoreManager.lifetimeID: return "Best Value"
+        default: return nil
+        }
+    }
+
+    private func trialText(for product: Product) -> String? {
+        guard trialEligibleIDs.contains(product.id),
+              let offer = product.subscription?.introductoryOffer,
+              offer.paymentMode == .freeTrial else { return nil }
+        return "\(offer.period.value)-\(offer.period.unit.label) free trial"
+    }
+
+    private func purchaseButtonTitle(for product: Product) -> String {
+        if product.id == StoreManager.lifetimeID { return "Unlock Forever" }
+        return trialText(for: product) == nil ? "Subscribe" : "Start Free Trial"
+    }
+
+    private func purchaseDisclosure(for product: Product) -> String {
+        guard let period = product.subscription?.subscriptionPeriod else {
+            return "One-time purchase of \(product.displayPrice). No subscription."
+        }
+        let renewal = "\(product.displayPrice)/\(period.unit.label)"
+        let lead = trialText(for: product).map { "\($0.capitalizedFirst), then \(renewal)." } ?? "\(renewal)."
+        return "\(lead) Renews automatically unless cancelled at least 24 hours before the end of the period. Manage in Settings."
+    }
+
+    /// Shows the half-price lifetime offer at most once a day when leaving the paywall,
+    /// then runs `next` (if any) once it's dismissed.
+    private func continueOrShowExitOffer(then next: (() -> Void)? = nil) {
+        let oneDay: TimeInterval = 24 * 60 * 60
+        let now = Date().timeIntervalSince1970
+        guard storeManager.lifetimeOfferProduct != nil,
+              storeManager.lifetimeProduct != nil,
+              now - exitOfferLastShown >= oneDay else {
+            next?()
+            return
+        }
+        exitOfferLastShown = now
+        afterExitOffer = next
+        showExitOffer = true
+    }
+
+    /// Free users can switch within GBP <-> AUD; any other currency opens the paywall.
+    private func selectScanCurrency(_ currency: Currency, isSource: Bool) {
+        let other = isSource ? currencyManager.destinationCurrency : currencyManager.sourceCurrency
+        guard storeManager.isPro || CurrencyManager.freeScanPair.contains(currency.code) else {
+            // Let the picker sheet finish dismissing before presenting the paywall.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { showPaywallSheet = true }
+            return
+        }
+        if currency == other {
+            currencyManager.swapCurrencies()
+        } else if isSource {
+            currencyManager.setSourceCurrency(currency)
+        } else {
+            currencyManager.setDestinationCurrency(currency)
+        }
+    }
+
+    private func loadTrialEligibility() async {
+        var eligible: Set<String> = []
+        for product in storeManager.products {
+            if let subscription = product.subscription,
+               subscription.introductoryOffer != nil,
+               await subscription.isEligibleForIntroOffer {
+                eligible.insert(product.id)
+            }
+        }
+        trialEligibleIDs = eligible
     }
 
     // MARK: - Secret Unlock Handler
@@ -516,50 +648,6 @@ struct ScannerTab: View {
         }
     }
 
-    private var stopButton: some View {
-        Button(action: {
-            withAnimation(.spring(response: 0.3)) {
-                isScanning.toggle()
-            }
-        }) {
-            HStack(spacing: 8) {
-                Image(systemName: isScanning ? "pause.fill" : "play.fill")
-                Text(isScanning ? "Pause" : "Resume")
-            }
-            .font(.headline)
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .background(
-                LinearGradient(
-                    colors: [AppTheme.gold, AppTheme.darkGold],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            .cornerRadius(AppTheme.cornerRadius)
-            .shadow(color: AppTheme.shadowColor, radius: 4, x: 0, y: 2)
-        }
-    }
-}
-
-// MARK: - Locked Feature Row
-struct LockedFeatureRow: View {
-    let icon: String
-    let text: String
-
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: icon)
-                .font(.system(size: 16))
-                .foregroundColor(AppTheme.gold)
-                .frame(width: 24)
-
-            Text(text)
-                .font(.system(size: 15))
-                .foregroundColor(AppTheme.secondaryText)
-        }
-    }
 }
 
 // MARK: - Calculator Tab
@@ -576,35 +664,31 @@ struct CalculatorTab: View {
     @State private var convertedAmount: Double?
 
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                Spacer()
+        VStack(spacing: 14) {
+            // Same flag cards as the scanner; every currency is free here.
+            ScanReadout(
+                sourceAmount: calculatorResult,
+                convertedAmount: convertedAmount,
+                selectSource: currencyManager.setSourceCurrency,
+                selectDestination: currencyManager.setDestinationCurrency,
+                locksProCurrencies: false,
+                popsOnChange: false
+            )
+            .frame(height: 150)
 
-                // Conversion header
-                CurrencyConversionHeader(
-                    sourceAmount: calculatorResult ?? 0,
-                    convertedAmount: convertedAmount ?? 0
-                )
-                .padding(.horizontal)
-                .padding(.bottom, 16)
-
-                // Calculator
-                CalculatorView(
-                    displayValue: $calculatorDisplay,
-                    calculatedResult: $calculatorResult,
-                    onResultChanged: { value in
-                        updateConversion(from: value)
-                    }
-                )
-                .padding(.horizontal)
-
-                Spacer()
-            }
-            .background(AppTheme.background)
-            .navigationTitle("Calculator")
-            .navigationBarTitleDisplayMode(.inline)
+            CalculatorView(
+                displayValue: $calculatorDisplay,
+                calculatedResult: $calculatorResult,
+                onResultChanged: { value in
+                    updateConversion(from: value)
+                }
+            )
+            .frame(maxHeight: .infinity)
         }
-        .navigationViewStyle(StackNavigationViewStyle())
+        .padding(.horizontal)
+        .padding(.top, 8)
+        .padding(.bottom, 12)
+        .background(AppTheme.background)
         .onChange(of: initialAmount) { _, newValue in
             if let amount = newValue {
                 calculatorDisplay = formatNumber(amount)
@@ -764,4 +848,182 @@ struct AppLogoView: View {
                 )
         }
     }
+}
+
+// MARK: - Review Prompt
+
+/// Asks for a rating after successful scans on 3 different days, then waits
+/// 90 days before asking again (Apple also caps the prompt at 3 per year).
+enum ReviewPrompt {
+    private static let scanDaysKey = "reviewPrompt.scanDays"
+    private static let lastAskedKey = "reviewPrompt.lastAsked"
+    private static let requiredDays = 3
+    private static let cooldown: TimeInterval = 90 * 24 * 60 * 60
+
+    static func recordSuccessfulScan(now: Date = Date()) -> Bool {
+        let defaults = UserDefaults.standard
+        let today = Calendar.current.startOfDay(for: now).timeIntervalSince1970
+        var days = Set(defaults.array(forKey: scanDaysKey) as? [Double] ?? [])
+        guard days.insert(today).inserted else { return false }
+        defaults.set(Array(days), forKey: scanDaysKey)
+
+        let lastAsked = defaults.double(forKey: lastAskedKey)
+        guard days.count >= requiredDays,
+              now.timeIntervalSince1970 - lastAsked >= cooldown else { return false }
+        defaults.set(now.timeIntervalSince1970, forKey: lastAskedKey)
+        defaults.set([Double](), forKey: scanDaysKey)
+        return true
+    }
+}
+
+// MARK: - Exit Offer
+
+struct ExitOfferView: View {
+    @EnvironmentObject var storeManager: StoreManager
+    let regular: Product
+    let offer: Product
+    let onPurchase: () -> Void
+    let onDecline: () -> Void
+
+    private var percentOff: Int {
+        guard regular.price > 0 else { return 0 }
+        let ratio = NSDecimalNumber(decimal: offer.price / regular.price).doubleValue
+        return Int(((1 - ratio) * 100).rounded())
+    }
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Spacer()
+
+            Text("Wait — one-time offer")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundColor(AppTheme.darkGold)
+
+            Text("\(percentOff)% off Lifetime")
+                .font(.system(size: 34, weight: .bold))
+                .foregroundColor(AppTheme.primaryText)
+
+            Text("Unlock camera scanning forever.\nPay once. No subscription.")
+                .font(.system(size: 16))
+                .foregroundColor(AppTheme.secondaryText)
+                .multilineTextAlignment(.center)
+
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                Text(regular.displayPrice)
+                    .font(.system(size: 22))
+                    .strikethrough()
+                    .foregroundColor(AppTheme.secondaryText)
+                Text(offer.displayPrice)
+                    .font(.system(size: 40, weight: .bold))
+                    .foregroundColor(AppTheme.primaryText)
+            }
+            .padding(.top, 8)
+
+            Spacer()
+
+            Button(action: onPurchase) {
+                Group {
+                    if storeManager.isLoading {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    } else {
+                        Text("Unlock Forever for \(offer.displayPrice)")
+                            .font(.system(size: 18, weight: .bold))
+                    }
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(
+                    LinearGradient(
+                        colors: [AppTheme.gold, AppTheme.darkGold],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .cornerRadius(AppTheme.cornerRadius)
+            }
+            .disabled(storeManager.isLoading)
+            .padding(.horizontal, 24)
+
+            Text("One-time purchase. No subscription.")
+                .font(.system(size: 11))
+                .foregroundColor(AppTheme.secondaryText.opacity(0.8))
+
+            Button("No thanks", action: onDecline)
+                .font(.system(size: 15))
+                .foregroundColor(AppTheme.secondaryText)
+                .padding(.bottom, 24)
+        }
+        .padding(.horizontal)
+        .presentationDetents([.large])
+    }
+}
+
+// MARK: - Plan Option Row
+
+struct PlanOptionRow: View {
+    let product: Product
+    let badge: String?
+    let isSelected: Bool
+
+    private var periodText: String {
+        guard let period = product.subscription?.subscriptionPeriod else { return "one time" }
+        return "per \(period.unit.label)"
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                .font(.system(size: 22))
+                .foregroundColor(isSelected ? AppTheme.gold : AppTheme.secondaryText.opacity(0.5))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(product.displayName)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(AppTheme.primaryText)
+                if let badge {
+                    Text(badge)
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(AppTheme.darkGold)
+                }
+            }
+
+            Spacer()
+
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(product.displayPrice)
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundColor(AppTheme.primaryText)
+                Text(periodText)
+                    .font(.system(size: 12))
+                    .foregroundColor(AppTheme.secondaryText)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .background(AppTheme.cardBackground)
+        .overlay(
+            RoundedRectangle(cornerRadius: AppTheme.cornerRadius)
+                .stroke(isSelected ? AppTheme.gold : AppTheme.secondaryText.opacity(0.2), lineWidth: isSelected ? 2 : 1)
+        )
+        .cornerRadius(AppTheme.cornerRadius)
+        .contentShape(Rectangle())
+    }
+}
+
+private extension Product.SubscriptionPeriod.Unit {
+    var label: String {
+        switch self {
+        case .day: return "day"
+        case .week: return "week"
+        case .month: return "month"
+        case .year: return "year"
+        @unknown default: return "period"
+        }
+    }
+}
+
+private extension String {
+    var capitalizedFirst: String { prefix(1).uppercased() + dropFirst() }
 }

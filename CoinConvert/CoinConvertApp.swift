@@ -6,6 +6,10 @@ struct CoinConvertApp: App {
     @StateObject private var currencyManager = CurrencyManager()
     @StateObject private var storeManager = StoreManager()
 
+    init() {
+        OnboardingState.skipForExistingUsers()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()

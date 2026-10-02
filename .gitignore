@@ -31,3 +31,5 @@ fastlane/test_output
 *.ipa
 *.dSYM.zip
 *.dSYM
+
+__pycache__/

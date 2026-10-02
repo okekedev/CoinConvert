@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1B3F70"/><stop offset="1" stop-color="#0A1A33"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F8DC7E"/><stop offset="1" stop-color="#BE8711"/></linearGradient>
+<radialGradient id="glass" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#5DA9FF"/><stop offset="0.55" stop-color="#1A4C8F"/><stop offset="1" stop-color="#071428"/></radialGradient>
+</defs>
+<rect width="1024" height="1024" fill="url(#bg)"/>
+<g transform="rotate(-28 512 512) translate(-40 0)">
+<path d="M 160 512 L 340 312 H 820 Q 880 312 880 372 V 652 Q 880 712 820 712 H 340 Z" fill="url(#gold)"/>
+<circle cx="560" cy="512" r="150" fill="#0A1A33"/>
+<circle cx="560" cy="512" r="118" fill="url(#glass)"/>
+<circle cx="560" cy="512" r="60" fill="#06101F"/>
+<circle cx="518" cy="470" r="22" fill="#FFFFFF" opacity="0.85"/>
+<circle cx="275" cy="512" r="30" fill="#0A1A33"/>
+</g>
+</svg>

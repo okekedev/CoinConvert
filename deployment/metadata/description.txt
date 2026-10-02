@@ -1,60 +1,42 @@
-Convert currencies instantly by pointing your camera at any price tag.
+Point your camera at any price and see it in your home currency instantly. Tagwise is the travel currency converter that reads price tags, menus and receipts for you, with no typing.
 
-Real Time Currency Conversion makes traveling effortless. Simply point your camera at a price, and see the converted amount in real-time. No typing required.
+HOW IT WORKS
+1. Open Tagwise and point your camera at a price
+2. The converted amount appears instantly
+3. Several prices in view? Tap the one you want
 
-CAMERA SCANNING
+CAMERA PRICE SCANNER
+• Live scanning: prices on tags, menus, receipts and signs are converted as you look at them
+• Smart detection: recognizes amounts and currency symbols automatically
+• Tap to select: choose a single price when there are several
+• Send to calculator: move any scanned price into the calculator in one tap
 
-• Point & Convert
-Aim your camera at any price tag or menu and see instant conversions
+CURRENCY CALCULATOR (FREE)
+• Full calculator for splitting bills, adding tips and comparing prices
+• Live conversion updates as you type
+• Swap currencies in one tap
 
-• Smart Recognition
-Automatically detects prices and currency symbols in the frame
+150+ CURRENCIES
+US Dollar, Euro, British Pound, Japanese Yen, Mexican Peso, Canadian Dollar, Australian Dollar, Swiss Franc, Chinese Yuan, Indian Rupee, Thai Baht, Korean Won, UAE Dirham, Brazilian Real, South African Rand and many more.
 
-• Tap to Select
-Multiple prices visible? Tap the one you want to convert
+WORKS OFFLINE
+Exchange rates update automatically when you're online and are saved on your phone, so conversions keep working on a plane, abroad without data, or in airplane mode.
 
-• Works Offline
-Exchange rates stored locally - no internet needed while traveling
-
-BUILT-IN CALCULATOR
-
-• Quick Calculations
-Full calculator for tips, splitting bills, or custom amounts
-
-• Live Conversion
-See conversions update as you type
-
-• Easy Transfer
-Send scanned prices to the calculator with one tap
-
-150+ CURRENCIES SUPPORTED
-
-USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN, BRL, KRW, SGD, HKD, NOK, SEK, DKK, NZD, ZAR, NGN, KES, EGP, AED, SAR, THB, PHP, IDR, VND, and many more.
+PRIVATE BY DESIGN
+Scanning happens entirely on your device. No photos are saved or uploaded. No account, no ads, no tracking.
 
 PERFECT FOR
+• Travel and vacations abroad
+• Shopping at markets and duty free
+• Reading restaurant menus in a foreign currency
+• Business trips, study abroad and digital nomads
 
-• International travel and vacations
-• Shopping abroad
-• Reading foreign menus and price tags
-• Comparing prices across countries
-• Business travelers
-• Digital nomads
+TAGWISE PRO
+The calculator is free. Pro unlocks the camera scanner:
+• Weekly or Monthly subscription, each with a 3-day free trial for new subscribers
+• Lifetime: pay once, no subscription
 
-SIMPLE & FAST
+Subscriptions renew automatically unless cancelled at least 24 hours before the end of the current period. Payment is charged to your Apple ID account. Manage or cancel anytime in your App Store account settings.
 
-1. Point camera at a price
-2. See the conversion instantly
-3. Tap to select specific prices
-4. Use calculator for custom amounts
-
-No complicated settings. No account required. Just open and scan.
-
-PRIVACY FIRST
-
-All processing happens on your device. No photos are stored or uploaded. No accounts, no tracking, no data collection. Your camera feed never leaves your phone.
-
-ALWAYS UP TO DATE
-
-Update exchange rates with one tap when you have internet. Rates are cached for offline use so you're never stuck without conversions.
-
-Download Real Time Currency Conversion and make your next trip stress-free.
+Terms of Use: https://okekedev.github.io/CoinConvert/terms.html
+Privacy Policy: https://okekedev.github.io/CoinConvert/privacy.html

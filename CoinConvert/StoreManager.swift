@@ -10,12 +10,26 @@ class StoreManager: ObservableObject {
 
     // MARK: - Published Properties
     @Published var isPro: Bool = false
+    @Published var hasLifetime: Bool = false
     @Published var isLoading: Bool = false
     @Published var products: [Product] = []
     @Published var secretUnlocked: Bool = false  // Secret unlock - persists until app force-close
 
     // MARK: - Product IDs
-    private let monthlySubscriptionID = "com.christianokeke.liveexchange.pro.monthly"
+    // Monthly keeps its original ID so existing subscribers stay Pro.
+    // Weekly and monthly share one subscription group; lifetime is non-consumable.
+    static let weeklyID = "com.christianokeke.liveexchange.pro.weekly"
+    static let monthlyID = "com.christianokeke.liveexchange.pro.monthly"
+    static let lifetimeID = "com.christianokeke.liveexchange.pro.lifetime"
+    // Half-price lifetime, only shown as the one-time offer when someone leaves the paywall.
+    static let lifetimeOfferID = "com.christianokeke.liveexchange.pro.lifetime.offer"
+    static let productIDs = [weeklyID, monthlyID, lifetimeID, lifetimeOfferID]
+    static let lifetimeIDs: Set<String> = [lifetimeID, lifetimeOfferID]
+
+    /// Plans listed on the main paywall (excludes the exit offer).
+    var planProducts: [Product] { products.filter { $0.id != Self.lifetimeOfferID } }
+    var lifetimeProduct: Product? { products.first { $0.id == Self.lifetimeID } }
+    var lifetimeOfferProduct: Product? { products.first { $0.id == Self.lifetimeOfferID } }
 
     // MARK: - Transaction Updates
     private var updateListenerTask: Task<Void, Error>? = nil
@@ -40,8 +54,8 @@ class StoreManager: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let productIDs = [monthlySubscriptionID]
-            let loadedProducts = try await Product.products(for: productIDs)
+            let loadedProducts = try await Product.products(for: Self.productIDs)
+                .sorted { Self.productIDs.firstIndex(of: $0.id)! < Self.productIDs.firstIndex(of: $1.id)! }
 
             DispatchQueue.main.async {
                 self.products = loadedProducts
@@ -115,14 +129,17 @@ class StoreManager: ObservableObject {
         }
 
         var isProUser = false
+        var ownsLifetime = false
 
         for await result in Transaction.currentEntitlements {
             do {
                 let transaction = try StoreManager.checkVerified(result)
 
-                if transaction.productID == monthlySubscriptionID {
+                if Self.productIDs.contains(transaction.productID), transaction.revocationDate == nil {
                     isProUser = true
-                    break
+                    if Self.lifetimeIDs.contains(transaction.productID) {
+                        ownsLifetime = true
+                    }
                 }
             } catch {
                 print("❌ Transaction verification failed: \(error)")
@@ -131,6 +148,7 @@ class StoreManager: ObservableObject {
 
         DispatchQueue.main.async {
             self.isPro = isProUser
+            self.hasLifetime = ownsLifetime
             print(self.isPro ? "✅ User is Pro" : "ℹ️ User is Free")
         }
     }

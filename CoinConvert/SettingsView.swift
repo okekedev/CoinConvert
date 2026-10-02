@@ -16,19 +16,21 @@ struct SettingsView: View {
                             Label("Pro", systemImage: "star.fill")
                                 .foregroundColor(AppTheme.gold)
                             Spacer()
-                            Text("Active")
+                            Text(storeManager.hasLifetime ? "Lifetime" : "Active")
                                 .foregroundColor(.green)
                                 .font(.subheadline.weight(.medium))
                         }
 
-                        Button(action: {
-                            Task {
-                                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-                                    try? await AppStore.showManageSubscriptions(in: windowScene)
+                        if !storeManager.hasLifetime {
+                            Button(action: {
+                                Task {
+                                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                                        try? await AppStore.showManageSubscriptions(in: windowScene)
+                                    }
                                 }
+                            }) {
+                                Label("Manage Subscription", systemImage: "creditcard")
                             }
-                        }) {
-                            Label("Manage Subscription", systemImage: "creditcard")
                         }
                     } else {
                         HStack {
@@ -40,7 +42,7 @@ struct SettingsView: View {
                         }
 
                         Button(action: {
-                            selectedTab = 0 // Go to Scan tab (locked scanner view)
+                            selectedTab = AppTab.scan // Scan tab shows the Pro screen
                         }) {
                             HStack {
                                 Label("Upgrade to Pro", systemImage: "lock.open")
@@ -125,7 +127,7 @@ struct SettingsView: View {
                     HStack {
                         Label("Version", systemImage: "info.circle")
                         Spacer()
-                        Text("1.0.0")
+                        Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")
                             .foregroundColor(AppTheme.secondaryText)
                     }
 
@@ -147,7 +149,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Privacy")
                 } footer: {
-                    Text("CoinConvert respects your privacy. Your currency preferences and exchange rates are stored only on your device.")
+                    Text("Tagwise respects your privacy. Your currency preferences and exchange rates are stored only on your device.")
                 }
             }
             .navigationTitle("Settings")

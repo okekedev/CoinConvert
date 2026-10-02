@@ -15,6 +15,7 @@
 		A10000010000000000000005 /* CurrencyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000005 /* CurrencyManager.swift */; };
 		A10000010000000000000006 /* CameraOCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000006 /* CameraOCRService.swift */; };
 		A10000010000000000000007 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000007 /* AppTheme.swift */; };
+		A10000010000000000000020 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000020 /* OnboardingView.swift */; };
 		A10000010000000000000008 /* CalculatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000008 /* CalculatorView.swift */; };
 		A10000010000000000000009 /* CurrencyPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000009 /* CurrencyPickerView.swift */; };
 		A10000010000000000000011 /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000011 /* ScannerView.swift */; };
@@ -31,6 +32,7 @@
 		A10000020000000000000005 /* CurrencyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyManager.swift; sourceTree = "<group>"; };
 		A10000020000000000000006 /* CameraOCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraOCRService.swift; sourceTree = "<group>"; };
 		A10000020000000000000007 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		A10000020000000000000020 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		A10000020000000000000008 /* CalculatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorView.swift; sourceTree = "<group>"; };
 		A10000020000000000000009 /* CurrencyPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyPickerView.swift; sourceTree = "<group>"; };
 		A10000020000000000000011 /* ScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 				A10000020000000000000005 /* CurrencyManager.swift */,
 				A10000020000000000000006 /* CameraOCRService.swift */,
 				A10000020000000000000007 /* AppTheme.swift */,
+				A10000020000000000000020 /* OnboardingView.swift */,
 				A10000020000000000000008 /* CalculatorView.swift */,
 				A10000020000000000000009 /* CurrencyPickerView.swift */,
 				A10000020000000000000011 /* ScannerView.swift */,
@@ -164,6 +167,7 @@
 				A10000010000000000000005 /* CurrencyManager.swift in Sources */,
 				A10000010000000000000006 /* CameraOCRService.swift in Sources */,
 				A10000010000000000000007 /* AppTheme.swift in Sources */,
+				A10000010000000000000020 /* OnboardingView.swift in Sources */,
 				A10000010000000000000008 /* CalculatorView.swift in Sources */,
 				A10000010000000000000009 /* CurrencyPickerView.swift in Sources */,
 				A10000010000000000000011 /* ScannerView.swift in Sources */,
@@ -300,12 +304,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = TUG3BHLSM4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CoinConvert/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = CoinConvert;
-				INFOPLIST_KEY_NSCameraUsageDescription = "CoinConvert uses the camera to scan price tags and automatically convert currencies.";
+				INFOPLIST_KEY_CFBundleDisplayName = Tagwise;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Tagwise uses the camera to scan price tags and automatically convert currencies.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -315,7 +319,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.christianokeke.liveexchange;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -330,12 +334,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = TUG3BHLSM4;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CoinConvert/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = CoinConvert;
-				INFOPLIST_KEY_NSCameraUsageDescription = "CoinConvert uses the camera to scan price tags and automatically convert currencies.";
+				INFOPLIST_KEY_CFBundleDisplayName = Tagwise;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Tagwise uses the camera to scan price tags and automatically convert currencies.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -345,7 +349,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.christianokeke.liveexchange;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

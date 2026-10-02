@@ -46,13 +46,20 @@ struct CurrencyPickerView: View {
 
 struct CurrencyListView: View {
     @Binding var selectedCurrency: Currency
+    /// Currencies that need Pro show a lock (picking one still goes through, so
+    /// the caller can open the paywall).
+    var isLocked: (Currency) -> Bool = { _ in false }
     @Environment(\.dismiss) private var dismiss
     @State private var searchText = ""
 
-    var filteredCurrencies: [Currency] {
-        if searchText.isEmpty {
-            return Currency.supportedCurrencies
-        }
+    private static let popularCodes = ["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "MXN", "THB"]
+
+    private var popular: [Currency] {
+        Self.popularCodes.compactMap(Currency.currency(for:))
+    }
+
+    private var filteredCurrencies: [Currency] {
+        guard !searchText.isEmpty else { return Currency.supportedCurrencies }
         return Currency.supportedCurrencies.filter {
             $0.name.localizedCaseInsensitiveContains(searchText) ||
             $0.code.localizedCaseInsensitiveContains(searchText)
@@ -60,48 +67,155 @@ struct CurrencyListView: View {
     }
 
     var body: some View {
-        NavigationView {
-            List(filteredCurrencies) { currency in
-                Button(action: {
-                    selectedCurrency = currency
-                    dismiss()
-                }) {
-                    HStack(spacing: 12) {
-                        Text(currency.flag)
-                            .font(.title)
+        VStack(spacing: 0) {
+            header
 
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(currency.code)
-                                .font(.headline)
-                                .foregroundColor(AppTheme.primaryText)
-                            Text(currency.name)
-                                .font(.subheadline)
-                                .foregroundColor(AppTheme.secondaryText)
-                        }
-
-                        Spacer()
-
-                        if currency == selectedCurrency {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(AppTheme.gold)
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    if searchText.isEmpty {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 10) {
+                                ForEach(popular) { currency in
+                                    popularChip(currency)
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 14)
                         }
                     }
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(PlainButtonStyle())
-            }
-            .searchable(text: $searchText, prompt: "Search currencies")
-            .navigationTitle("Select Currency")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
+
+                    ForEach(filteredCurrencies) { currency in
+                        row(currency)
                     }
-                    .foregroundColor(AppTheme.blue)
+
+                    if filteredCurrencies.isEmpty {
+                        Text("No currency matches \u{201C}\(searchText)\u{201D}")
+                            .font(.system(size: 15))
+                            .foregroundColor(AppTheme.secondaryText)
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 40)
+                    }
                 }
+                .padding(.bottom, 24)
             }
+            .scrollDismissesKeyboard(.immediately)
         }
+        .background(AppTheme.background)
+        .presentationDragIndicator(.visible)
+    }
+
+    // MARK: Pieces
+
+    private var header: some View {
+        VStack(spacing: 14) {
+            HStack {
+                Text("Currency")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                Spacer()
+                Button(action: { dismiss() }) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(width: 32, height: 32)
+                        .background(Color.white.opacity(0.15), in: Circle())
+                }
+                .accessibilityLabel("Close")
+            }
+
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(AppTheme.secondaryText)
+                TextField("Search", text: $searchText)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .foregroundColor(AppTheme.primaryText)
+                if !searchText.isEmpty {
+                    Button(action: { searchText = "" }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(AppTheme.secondaryText)
+                    }
+                    .accessibilityLabel("Clear search")
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 11)
+            .background(Color.white, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 24)
+        .padding(.bottom, 16)
+        .background(AppTheme.darkBlue)
+    }
+
+    private func popularChip(_ currency: Currency) -> some View {
+        let palette = FlagPalette.palette(for: currency.flag)
+        let isSelected = currency == selectedCurrency
+        return Button(action: { select(currency) }) {
+            HStack(spacing: 6) {
+                Text(currency.flag).font(.system(size: 18))
+                Text(currency.code)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(.white)
+                if isLocked(currency) {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(.white.opacity(0.8))
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(palette.primary, in: Capsule())
+            .overlay(Capsule().stroke(AppTheme.gold, lineWidth: isSelected ? 2.5 : 0))
+        }
+        .accessibilityLabel("\(currency.name)\(isLocked(currency) ? ", Pro" : "")")
+    }
+
+    private func row(_ currency: Currency) -> some View {
+        let palette = FlagPalette.palette(for: currency.flag)
+        let isSelected = currency == selectedCurrency
+        return Button(action: { select(currency) }) {
+            HStack(spacing: 14) {
+                Text(currency.flag)
+                    .font(.system(size: 24))
+                    .frame(width: 44, height: 44)
+                    .background(palette.primary, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(currency.code)
+                        .font(.system(size: 17, weight: .bold))
+                        .foregroundColor(AppTheme.primaryText)
+                    Text(currency.name)
+                        .font(.system(size: 14))
+                        .foregroundColor(AppTheme.secondaryText)
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 22))
+                        .foregroundColor(AppTheme.gold)
+                } else if isLocked(currency) {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 13))
+                        .foregroundColor(AppTheme.secondaryText.opacity(0.7))
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 8)
+            .background(isSelected ? AppTheme.lightGold.opacity(0.25) : Color.clear)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(currency.name)\(isLocked(currency) ? ", Pro" : "")")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    private func select(_ currency: Currency) {
+        selectedCurrency = currency
+        dismiss()
     }
 }
 

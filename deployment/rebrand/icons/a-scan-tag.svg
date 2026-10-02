@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22528F"/><stop offset="1" stop-color="#0D2342"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F6D873"/><stop offset="1" stop-color="#C08A12"/></linearGradient>
+</defs>
+<rect width="1024" height="1024" fill="url(#bg)"/>
+<g fill="none" stroke="#FFFFFF" stroke-width="34" stroke-linecap="round" stroke-linejoin="round" opacity="0.92">
+<path d="M 170 300 V 170 H 300"/><path d="M 724 170 H 854 V 300"/><path d="M 854 724 V 854 H 724"/><path d="M 300 854 H 170 V 724"/>
+</g>
+<g transform="rotate(-28 545 512)">
+<path d="M 250 512 L 400 352 H 790 Q 840 352 840 402 V 622 Q 840 672 790 672 H 400 Z" fill="url(#gold)"/>
+<circle cx="400" cy="512" r="34" fill="#0D2342"/>
+<g stroke="#0D2342" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" fill="none">
+<path d="M 500 470 H 730 M 685 425 L 730 470 L 685 515"/>
+<path d="M 730 562 H 500 M 545 517 L 500 562 L 545 607"/>
+</g>
+</g>
+</svg>

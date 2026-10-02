@@ -1,7 +1,5 @@
-Initial release of Real Time Currency Conversion!
+Real Time Currency Conversion is now Tagwise!
 
-• Camera scanning for instant price conversion
-• Support for 150+ world currencies
-• Built-in calculator with live conversion
-• Offline exchange rates
-• Clean, intuitive interface
+• New name, same instant camera price conversion
+• Exchange rates now update reliably
+• New plans: Weekly, Monthly or Lifetime, with a 3-day free trial on subscriptions
