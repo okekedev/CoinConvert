@@ -12,21 +12,21 @@ struct CurrencyPickerView: View {
         }) {
             HStack(spacing: 8) {
                 Text(selectedCurrency.flag)
-                    .font(.title)
+                    .font(.app(28, .bold))
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(selectedCurrency.code)
-                        .font(.headline)
+                        .font(.app(17, .semibold))
                         .foregroundColor(darkMode ? .white : AppTheme.primaryText)
                     Text(label)
-                        .font(.caption)
+                        .font(.app(12))
                         .foregroundColor(darkMode ? .white.opacity(0.7) : AppTheme.secondaryText)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.down")
-                    .font(.caption)
+                    .font(.app(12))
                     .foregroundColor(darkMode ? .white.opacity(0.7) : AppTheme.secondaryText)
             }
             .padding(.horizontal, 12)
@@ -34,7 +34,7 @@ struct CurrencyPickerView: View {
             .background(darkMode ? Color.white.opacity(0.15) : AppTheme.cardBackground)
             .cornerRadius(AppTheme.cornerRadius)
             .overlay(
-                RoundedRectangle(cornerRadius: AppTheme.cornerRadius)
+                Rectangle()
                     .stroke(AppTheme.gold.opacity(darkMode ? 0.5 : 0.3), lineWidth: 1)
             )
         }
@@ -90,7 +90,7 @@ struct CurrencyListView: View {
 
                     if filteredCurrencies.isEmpty {
                         Text("No currency matches \u{201C}\(searchText)\u{201D}")
-                            .font(.system(size: 15))
+                            .font(.app(15))
                             .foregroundColor(AppTheme.secondaryText)
                             .frame(maxWidth: .infinity)
                             .padding(.top, 40)
@@ -100,6 +100,7 @@ struct CurrencyListView: View {
             }
             .scrollDismissesKeyboard(.immediately)
         }
+        .font(.app(17))
         .background(AppTheme.background)
         .presentationDragIndicator(.visible)
     }
@@ -110,15 +111,15 @@ struct CurrencyListView: View {
         VStack(spacing: 14) {
             HStack {
                 Text("Currency")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .font(.app(22, .bold))
                     .foregroundColor(.white)
                 Spacer()
                 Button(action: { dismiss() }) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.app(14, .bold))
                         .foregroundColor(.white)
                         .frame(width: 32, height: 32)
-                        .background(Color.white.opacity(0.15), in: Circle())
+                        .background(Color.white.opacity(0.15), in: Rectangle())
                 }
                 .accessibilityLabel("Close")
             }
@@ -140,7 +141,7 @@ struct CurrencyListView: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 11)
-            .background(Color.white, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .background(Color.white, in: Rectangle())
         }
         .padding(.horizontal, 20)
         .padding(.top, 24)
@@ -153,20 +154,20 @@ struct CurrencyListView: View {
         let isSelected = currency == selectedCurrency
         return Button(action: { select(currency) }) {
             HStack(spacing: 6) {
-                Text(currency.flag).font(.system(size: 18))
+                Text(currency.flag).font(.app(18))
                 Text(currency.code)
-                    .font(.system(size: 15, weight: .bold))
+                    .font(.app(15, .bold))
                     .foregroundColor(.white)
                 if isLocked(currency) {
                     Image(systemName: "lock.fill")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.app(10, .bold))
                         .foregroundColor(.white.opacity(0.8))
                 }
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(palette.primary, in: Capsule())
-            .overlay(Capsule().stroke(AppTheme.gold, lineWidth: isSelected ? 2.5 : 0))
+            .background(palette.primary, in: Rectangle())
+            .overlay(Rectangle().stroke(AppTheme.gold, lineWidth: isSelected ? 2.5 : 0))
         }
         .accessibilityLabel("\(currency.name)\(isLocked(currency) ? ", Pro" : "")")
     }
@@ -177,16 +178,16 @@ struct CurrencyListView: View {
         return Button(action: { select(currency) }) {
             HStack(spacing: 14) {
                 Text(currency.flag)
-                    .font(.system(size: 24))
+                    .font(.app(24))
                     .frame(width: 44, height: 44)
-                    .background(palette.primary, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .background(palette.primary, in: Rectangle())
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(currency.code)
-                        .font(.system(size: 17, weight: .bold))
+                        .font(.app(17, .bold))
                         .foregroundColor(AppTheme.primaryText)
                     Text(currency.name)
-                        .font(.system(size: 14))
+                        .font(.app(14))
                         .foregroundColor(AppTheme.secondaryText)
                         .lineLimit(1)
                 }
@@ -195,11 +196,11 @@ struct CurrencyListView: View {
 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 22))
+                        .font(.app(22))
                         .foregroundColor(AppTheme.gold)
                 } else if isLocked(currency) {
                     Image(systemName: "lock.fill")
-                        .font(.system(size: 13))
+                        .font(.app(13))
                         .foregroundColor(AppTheme.secondaryText.opacity(0.7))
                 }
             }
@@ -225,7 +226,7 @@ struct CurrencySwapButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "arrow.left.arrow.right")
-                .font(.title3)
+                .font(.app(20, .semibold))
                 .foregroundColor(.white)
                 .frame(width: 44, height: 44)
                 .background(
@@ -235,7 +236,7 @@ struct CurrencySwapButton: View {
                         endPoint: .bottomTrailing
                     )
                 )
-                .clipShape(Circle())
+                .clipShape(Rectangle())
                 .shadow(color: AppTheme.shadowColor, radius: 4, x: 0, y: 2)
         }
     }

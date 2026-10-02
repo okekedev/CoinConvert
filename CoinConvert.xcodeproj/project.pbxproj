@@ -16,11 +16,16 @@
 		A10000010000000000000006 /* CameraOCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000006 /* CameraOCRService.swift */; };
 		A10000010000000000000007 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000007 /* AppTheme.swift */; };
 		A10000010000000000000020 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000020 /* OnboardingView.swift */; };
+		A10000010000000000000021 /* LowPolyLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000021 /* LowPolyLogo.swift */; };
 		A10000010000000000000008 /* CalculatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000008 /* CalculatorView.swift */; };
 		A10000010000000000000009 /* CurrencyPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000009 /* CurrencyPickerView.swift */; };
 		A10000010000000000000011 /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000011 /* ScannerView.swift */; };
 		A10000010000000000000012 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000012 /* SettingsView.swift */; };
 		A10000010000000000000013 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000013 /* Assets.xcassets */; };
+		A10000010000000000000030 /* ChakraPetch-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000030 /* ChakraPetch-Regular.ttf */; };
+		A10000010000000000000031 /* ChakraPetch-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000031 /* ChakraPetch-Medium.ttf */; };
+		A10000010000000000000032 /* ChakraPetch-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000032 /* ChakraPetch-SemiBold.ttf */; };
+		A10000010000000000000033 /* ChakraPetch-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A10000020000000000000033 /* ChakraPetch-Bold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,11 +38,16 @@
 		A10000020000000000000006 /* CameraOCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraOCRService.swift; sourceTree = "<group>"; };
 		A10000020000000000000007 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		A10000020000000000000020 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		A10000020000000000000021 /* LowPolyLogo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LowPolyLogo.swift; sourceTree = "<group>"; };
 		A10000020000000000000008 /* CalculatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorView.swift; sourceTree = "<group>"; };
 		A10000020000000000000009 /* CurrencyPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyPickerView.swift; sourceTree = "<group>"; };
 		A10000020000000000000011 /* ScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
 		A10000020000000000000012 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A10000020000000000000013 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A10000020000000000000030 /* ChakraPetch-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Fonts/ChakraPetch-Regular.ttf; sourceTree = "<group>"; };
+		A10000020000000000000031 /* ChakraPetch-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Fonts/ChakraPetch-Medium.ttf; sourceTree = "<group>"; };
+		A10000020000000000000032 /* ChakraPetch-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Fonts/ChakraPetch-SemiBold.ttf; sourceTree = "<group>"; };
+		A10000020000000000000033 /* ChakraPetch-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Fonts/ChakraPetch-Bold.ttf; sourceTree = "<group>"; };
 		A10000020000000000000014 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A10000030000000000000001 /* CoinConvert.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoinConvert.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -72,11 +82,16 @@
 				A10000020000000000000006 /* CameraOCRService.swift */,
 				A10000020000000000000007 /* AppTheme.swift */,
 				A10000020000000000000020 /* OnboardingView.swift */,
+				A10000020000000000000021 /* LowPolyLogo.swift */,
 				A10000020000000000000008 /* CalculatorView.swift */,
 				A10000020000000000000009 /* CurrencyPickerView.swift */,
 				A10000020000000000000011 /* ScannerView.swift */,
 				A10000020000000000000012 /* SettingsView.swift */,
 				A10000020000000000000013 /* Assets.xcassets */,
+				A10000020000000000000030 /* ChakraPetch-Regular.ttf */,
+				A10000020000000000000031 /* ChakraPetch-Medium.ttf */,
+				A10000020000000000000032 /* ChakraPetch-SemiBold.ttf */,
+				A10000020000000000000033 /* ChakraPetch-Bold.ttf */,
 				A10000020000000000000014 /* Info.plist */,
 				706D3042A4F4122F03093684 /* StoreManager.swift */,
 			);
@@ -150,6 +165,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000010000000000000013 /* Assets.xcassets in Resources */,
+				A10000010000000000000030 /* ChakraPetch-Regular.ttf in Resources */,
+				A10000010000000000000031 /* ChakraPetch-Medium.ttf in Resources */,
+				A10000010000000000000032 /* ChakraPetch-SemiBold.ttf in Resources */,
+				A10000010000000000000033 /* ChakraPetch-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,6 +187,7 @@
 				A10000010000000000000006 /* CameraOCRService.swift in Sources */,
 				A10000010000000000000007 /* AppTheme.swift in Sources */,
 				A10000010000000000000020 /* OnboardingView.swift in Sources */,
+				A10000010000000000000021 /* LowPolyLogo.swift in Sources */,
 				A10000010000000000000008 /* CalculatorView.swift in Sources */,
 				A10000010000000000000009 /* CurrencyPickerView.swift in Sources */,
 				A10000010000000000000011 /* ScannerView.swift in Sources */,
@@ -310,6 +330,7 @@
 				INFOPLIST_FILE = CoinConvert/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Tagwise;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Tagwise uses the camera to scan price tags and automatically convert currencies.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Tagwise uses your location to pick the local currency when you travel.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -340,6 +361,7 @@
 				INFOPLIST_FILE = CoinConvert/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Tagwise;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Tagwise uses the camera to scan price tags and automatically convert currencies.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Tagwise uses your location to pick the local currency when you travel.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

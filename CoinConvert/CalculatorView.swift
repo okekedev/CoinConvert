@@ -25,12 +25,12 @@ struct CalculatorView: View {
             VStack(alignment: .trailing, spacing: 4) {
                 if let op = currentOperation {
                     Text("\(formatNumber(previousValue)) \(op.symbol)")
-                        .font(.caption)
+                        .font(.app(12))
                         .foregroundColor(AppTheme.secondaryText)
                 }
 
                 Text(isPercentMode ? "\(displayValue)%" : displayValue)
-                    .font(.system(size: 36, weight: .light, design: .rounded))
+                    .font(.app(36, .light))
                     .foregroundColor(AppTheme.primaryText)
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
@@ -49,7 +49,7 @@ struct CalculatorView: View {
                             buttonTapped(button)
                         }) {
                             Text(button.title)
-                                .font(.title2.weight(.medium))
+                                .font(.app(22, .medium))
                                 .frame(maxWidth: .infinity, minHeight: 50)
                         }
                         .buttonStyle(CalculatorButtonStyle(isOperator: button.isOperator, isEquals: button.isEquals))

@@ -19,31 +19,42 @@ enum OnboardingState {
 
 // MARK: - Onboarding
 
-/// What the app does, then camera permission (only if the system hasn't asked yet).
-/// Finishing drops people straight into the scanner on the free currency pair.
+/// What the app does, your home currency (then location, so the local currency
+/// is picked when you travel), and camera permission if the system hasn't asked.
 struct OnboardingView: View {
+    @EnvironmentObject var currencyManager: CurrencyManager
+    @EnvironmentObject var locationDetector: LocationCurrencyDetector
     let onFinish: () -> Void
 
-    @State private var step = 0
+    private enum Step { case demo, home, camera }
+
+    @State private var step = Step.demo
+    @State private var showingCurrencyList = false
     /// Ignores a second tap while the next step slides in, so a quick
-    /// double tap can't skip a step or hit "Allow camera" by accident.
+    /// double tap can't skip a step or hit a permission button by accident.
     @State private var isTransitioning = false
 
     private let needsCameraStep = AVCaptureDevice.authorizationStatus(for: .video) == .notDetermined
-    private var stepCount: Int { needsCameraStep ? 2 : 1 }
-    private var isCameraStep: Bool { step == 1 }
+    private var steps: [Step] { needsCameraStep ? [.demo, .home, .camera] : [.demo, .home] }
+    private var stepIndex: Int { steps.firstIndex(of: step) ?? 0 }
 
     var body: some View {
         ZStack {
             OnboardingPalette.background.ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 0) {
-                topBar
+                progress
+                    .frame(height: 44)
+                    .padding(.top, 8)
 
                 Spacer(minLength: 24)
 
                 Group {
-                    if isCameraStep { cameraVisual } else { PriceTagDemo() }
+                    switch step {
+                    case .demo: PriceTagDemo(homeCurrency: currencyManager.homeCurrency)
+                    case .home: homeCurrencyVisual
+                    case .camera: cameraVisual
+                    }
                 }
                 .frame(maxWidth: .infinity)
                 .frame(height: 300)
@@ -51,12 +62,11 @@ struct OnboardingView: View {
                 Spacer(minLength: 24)
 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text(isCameraStep ? "Allow the camera." : "Point at any price.")
-                        .font(.system(size: 34, weight: .bold, design: .rounded))
+                    Text(headline)
+                        .font(.app(34, .bold))
                         .foregroundColor(.white)
-                    Text(isCameraStep ? "Used only to read prices. Nothing is saved."
-                                      : "See tags, menus and receipts in your money.")
-                        .font(.system(size: 17))
+                    Text(message)
+                        .font(.app(17))
                         .foregroundColor(OnboardingPalette.secondaryText)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -66,67 +76,118 @@ struct OnboardingView: View {
 
                 Spacer(minLength: 32)
 
-                primaryButton
+                Button(action: advance) {
+                    Text(buttonTitle)
+                        .font(.app(18, .bold))
+                        .foregroundColor(OnboardingPalette.background)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 17)
+                        .background(AppTheme.gold)
+                }
 
                 Button(action: onFinish) {
                     Text("Not now")
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.app(16, .medium))
                         .foregroundColor(OnboardingPalette.secondaryText)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                 }
-                .opacity(isCameraStep ? 1 : 0)
-                .disabled(!isCameraStep)
+                .opacity(step == .camera ? 1 : 0)
+                .disabled(step != .camera)
             }
             .padding(.horizontal, 28)
             .padding(.bottom, 8)
+        }
+        .font(.app(17))
+        .sheet(isPresented: $showingCurrencyList) {
+            CurrencyListView(selectedCurrency: Binding(
+                get: { currencyManager.homeCurrency },
+                set: { currencyManager.setHomeCurrency($0) }
+            ))
         }
     }
 
     // MARK: Pieces
 
-    private var topBar: some View {
-        HStack {
-            if stepCount > 1 {
-                HStack(spacing: 6) {
-                    ForEach(0..<stepCount, id: \.self) { index in
-                        Capsule()
-                            .fill(index <= step ? AppTheme.gold : Color.white.opacity(0.2))
-                            .frame(width: index == step ? 22 : 8, height: 8)
-                    }
-                }
-                .animation(.easeOut(duration: 0.25), value: step)
-                .accessibilityElement()
-                .accessibilityLabel("Step \(step + 1) of \(stepCount)")
+    private var progress: some View {
+        HStack(spacing: 6) {
+            ForEach(steps.indices, id: \.self) { index in
+                Rectangle()
+                    .fill(index <= stepIndex ? AppTheme.gold : Color.white.opacity(0.2))
+                    .frame(width: index == stepIndex ? 22 : 8, height: 8)
             }
-            Spacer()
         }
-        .frame(height: 44)
-        .padding(.top, 8)
+        .animation(.easeOut(duration: 0.25), value: step)
+        .accessibilityElement()
+        .accessibilityLabel("Step \(stepIndex + 1) of \(steps.count)")
     }
 
-    private var primaryButton: some View {
-        Button(action: advance) {
-            Text(isCameraStep ? "Allow camera" : (needsCameraStep ? "Continue" : "Start scanning"))
-                .font(.system(size: 18, weight: .bold))
-                .foregroundColor(OnboardingPalette.background)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 17)
-                .background(AppTheme.gold)
-                .cornerRadius(14)
+    private var homeCurrencyVisual: some View {
+        let home = currencyManager.homeCurrency
+        let palette = FlagPalette.palette(for: home.flag)
+        return Button(action: { showingCurrencyList = true }) {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(spacing: 8) {
+                    Text(home.flag).font(.app(34))
+                    Text(home.code)
+                        .font(.app(26, .bold))
+                    Image(systemName: "chevron.down")
+                        .font(.app(15, .bold))
+                        .opacity(0.8)
+                }
+                Spacer()
+                Text(home.name)
+                    .font(.app(20, .semibold))
+            }
+            .foregroundColor(.white)
+            .padding(22)
+            .frame(width: 240, height: 180, alignment: .leading)
+            .background(
+                LinearGradient(colors: [palette.primary, palette.primaryDeep],
+                               startPoint: .topLeading, endPoint: .bottomTrailing)
+            )
+            .overlay(alignment: .bottom) { palette.accent.frame(height: 6) }
+            .clipShape(Rectangle())
+            .shadow(color: .black.opacity(0.35), radius: 18, x: 0, y: 10)
         }
+        .accessibilityLabel("Home currency: \(home.name). Tap to change.")
     }
 
     private var cameraVisual: some View {
         ZStack {
             ScanCorners()
                 .stroke(Color.white.opacity(0.9), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round))
-                .frame(width: 200, height: 200)
-            Image(systemName: "camera.fill")
-                .font(.system(size: 64, weight: .regular))
-                .foregroundColor(AppTheme.gold)
+                .frame(width: 220, height: 220)
+            LowPolyIcon(kind: .camera)
+                .frame(width: 150, height: 150)
         }
         .accessibilityHidden(true)
+    }
+
+    // MARK: Copy
+
+    private var headline: String {
+        switch step {
+        case .demo: return "Point at any price."
+        case .home: return "Your home currency."
+        case .camera: return "Allow the camera."
+        }
+    }
+
+    private var message: String {
+        switch step {
+        case .demo: return "See tags, menus and receipts in your money."
+        case .home: return "Prices convert to this. When you travel, the local currency is picked for you."
+        case .camera: return "Used only to read prices. Nothing is saved."
+        }
+    }
+
+    private var buttonTitle: String {
+        switch step {
+        case .demo: return "Continue"
+        case .home: return needsCameraStep ? "Continue" : "Get started"
+        case .camera: return "Allow camera"
+        }
     }
 
     // MARK: Actions
@@ -136,14 +197,23 @@ struct OnboardingView: View {
         isTransitioning = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { isTransitioning = false }
 
-        if isCameraStep {
+        switch step {
+        case .demo:
+            withAnimation(.easeOut(duration: 0.3)) { step = .home }
+        case .home:
+            currencyManager.setHomeCurrency(currencyManager.homeCurrency)
+            // Ask for location now, while "the local currency is picked for you" is on screen.
+            locationDetector.requestPermission {
+                if needsCameraStep {
+                    withAnimation(.easeOut(duration: 0.3)) { step = .camera }
+                } else {
+                    onFinish()
+                }
+            }
+        case .camera:
             AVCaptureDevice.requestAccess(for: .video) { _ in
                 DispatchQueue.main.async(execute: onFinish)
             }
-        } else if needsCameraStep {
-            withAnimation(.easeOut(duration: 0.3)) { step = 1 }
-        } else {
-            onFinish()
         }
     }
 }
@@ -159,26 +229,31 @@ private enum OnboardingPalette {
 
 // MARK: - Price Tag Demo
 
-/// A paper price tag in pounds gets "scanned": the corners close in, then the
+/// A paper price tag gets "scanned": the corners close in, then the
 /// converted amount appears below. Loops so it reads even if you glance late.
 private struct PriceTagDemo: View {
     @EnvironmentObject var exchangeRateManager: ExchangeRateManager
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    let homeCurrency: Currency
 
     @State private var scanned = false
-    // Matches the free GBP <-> AUD pair people land on after onboarding.
-    private let tagText = "£24.00"
-    private let sourceAmount = 24.0
+
+    /// A yen price converted to your home currency (or a euro price if home is yen).
+    private var example: (tag: String, amount: Double, code: String) {
+        homeCurrency.code == "JPY" ? ("€24.00", 24, "EUR") : ("¥4,800", 4800, "JPY")
+    }
+
+    private var tagText: String { example.tag }
 
     private var convertedText: String {
-        guard let gbp = Currency.currency(for: "GBP"), let aud = Currency.currency(for: "AUD"),
-              let value = exchangeRateManager.convert(amount: sourceAmount, from: gbp, to: aud) else {
+        guard let from = Currency.currency(for: example.code),
+              let value = exchangeRateManager.convert(amount: example.amount, from: from, to: homeCurrency) else {
             return ""
         }
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.currencyCode = "AUD"
-        formatter.currencySymbol = "A$"
+        formatter.currencyCode = homeCurrency.code
+        formatter.maximumFractionDigits = value >= 1000 ? 0 : 2
         return formatter.string(from: NSNumber(value: value)) ?? ""
     }
 
@@ -196,14 +271,14 @@ private struct PriceTagDemo: View {
             .frame(height: 200)
 
             Text("≈ \(convertedText)")
-                .font(.system(size: 40, weight: .heavy, design: .rounded))
+                .font(.app(40, .heavy))
                 .monospacedDigit()
                 .foregroundColor(AppTheme.gold)
                 .opacity(scanned ? 1 : 0)
                 .offset(y: scanned ? 0 : 12)
         }
         .accessibilityElement()
-        .accessibilityLabel("A price tag reading 24 pounds, converted to \(convertedText).")
+        .accessibilityLabel("A price tag reading \(tagText), converted to \(convertedText).")
         .task { await runLoop() }
     }
 
@@ -213,7 +288,7 @@ private struct PriceTagDemo: View {
                 .stroke(Color.black.opacity(0.25), lineWidth: 2)
                 .frame(width: 14, height: 14)
             Text(tagText)
-                .font(.system(size: 44, weight: .heavy, design: .rounded))
+                .font(.app(44, .heavy))
                 .monospacedDigit()
                 .foregroundColor(OnboardingPalette.background)
         }
@@ -287,14 +362,13 @@ struct ScanCorners: Shape {
 struct CameraAccessOffView: View {
     var body: some View {
         VStack(spacing: 14) {
-            Image(systemName: "camera.fill")
-                .font(.system(size: 40))
-                .foregroundColor(AppTheme.gold)
+            LowPolyIcon(kind: .camera)
+                .frame(width: 72, height: 72)
             Text("Camera access is off")
-                .font(.system(size: 20, weight: .bold))
+                .font(.app(20, .bold))
                 .foregroundColor(.white)
             Text("Turn on Camera for Tagwise in Settings to scan prices.")
-                .font(.system(size: 15))
+                .font(.app(15))
                 .foregroundColor(.white.opacity(0.75))
                 .multilineTextAlignment(.center)
             Button(action: {
@@ -303,7 +377,7 @@ struct CameraAccessOffView: View {
                 }
             }) {
                 Text("Open Settings")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.app(16, .semibold))
                     .foregroundColor(.white)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)

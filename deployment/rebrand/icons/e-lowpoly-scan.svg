@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<defs><radialGradient id="glow" cx="0.5" cy="0.48" r="0.62"><stop offset="0" stop-color="#27466F"/><stop offset="0.55" stop-color="#132238"/><stop offset="1" stop-color="#0B121C"/></radialGradient></defs>
+<rect width="1024" height="1024" fill="url(#glow)"/>
+<g fill="none" stroke="#FFFFFF" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"><path d="M 170 300 V 170 H 300"/><path d="M 724 170 H 854 V 300"/><path d="M 854 724 V 854 H 724"/><path d="M 300 854 H 170 V 724"/></g>
+<g transform="translate(512 512) scale(0.86) translate(-515 -512) rotate(-28 515 512)">
+<polygon fill="#FBE8A6" points="380,352 800,352 740,412 410,412"/>
+<polygon fill="#C48D14" points="800,352 800,672 740,612 740,412"/>
+<polygon fill="#9E6C0A" points="800,672 380,672 410,612 740,612"/>
+<polygon fill="#F6D772" points="230,512 380,352 410,412 320,512"/>
+<polygon fill="#D29E20" points="380,672 230,512 320,512 410,612"/>
+<polygon fill="#F1CD5A" points="320,512 410,412 740,412 410,612"/>
+<polygon fill="#E2B53A" points="410,612 740,412 740,612"/>
+<g fill="none" stroke="#0B1626" stroke-width="9" stroke-linejoin="round">
+<polygon points="230,512 380,352 800,352 800,672 380,672"/>
+<polygon points="320,512 410,412 740,412 740,612 410,612"/>
+<line x1="230" y1="512" x2="320" y2="512"/><line x1="380" y1="352" x2="410" y2="412"/><line x1="800" y1="352" x2="740" y2="412"/>
+<line x1="800" y1="672" x2="740" y2="612"/><line x1="380" y1="672" x2="410" y2="612"/><line x1="410" y1="612" x2="740" y2="412"/>
+</g>
+<circle cx="392" cy="512" r="27" fill="#0B1626"/>
+</g></svg>

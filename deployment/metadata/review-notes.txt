@@ -53,9 +53,9 @@ KNOWN LIMITATIONS:
 - Camera scanning works best with clear, printed text
 
 SUBSCRIPTION INFORMATION:
-- Pro unlocks camera scanning. Free users keep the calculator with currency conversion.
+- Tagwise requires a subscription or Lifetime purchase. After the short onboarding, the Pro screen is shown.
 - Plans: Weekly $0.99 and Monthly $2.99 (auto-renewing, 3-day free trial for new subscribers), Lifetime $29.99 (one-time purchase).
-- If a free user taps "Continue to Calculator" on the Pro screen, a one-time offer for Lifetime at $14.99 (a separate one-time purchase) is shown at most once per day. "No thanks" dismisses it.
-- To test: select a plan on the locked Scan tab and tap "Start Free Trial" or "Unlock Forever".
+- The close (X) button on the Pro screen appears at most once per day and opens a one-time Lifetime offer at $14.99 (a separate one-time purchase).
+- To test: complete onboarding, choose a plan and tap "Start Free Trial" or "Unlock Forever". Restore Purchases is on the Pro screen.
 
 Thank you for reviewing Tagwise!

@@ -11,6 +11,9 @@ class StoreManager: ObservableObject {
     // MARK: - Published Properties
     @Published var isPro: Bool = false
     @Published var hasLifetime: Bool = false
+    /// False until the first purchase check finishes, so the app can wait
+    /// instead of flashing the paywall at subscribers.
+    @Published var hasCheckedEntitlements: Bool = false
     @Published var isLoading: Bool = false
     @Published var products: [Product] = []
     @Published var secretUnlocked: Bool = false  // Secret unlock - persists until app force-close
@@ -114,6 +117,7 @@ class StoreManager: ObservableObject {
         if ENABLE_PRO_FOR_DEVELOPMENT {
             DispatchQueue.main.async {
                 self.isPro = true
+                self.hasCheckedEntitlements = true
                 print("🔓 Pro features enabled (development mode)")
             }
             return
@@ -123,6 +127,7 @@ class StoreManager: ObservableObject {
         if secretUnlocked {
             DispatchQueue.main.async {
                 self.isPro = true
+                self.hasCheckedEntitlements = true
                 print("🔓 Pro features unlocked (secret code)")
             }
             return
@@ -149,6 +154,7 @@ class StoreManager: ObservableObject {
         DispatchQueue.main.async {
             self.isPro = isProUser
             self.hasLifetime = ownsLifetime
+            self.hasCheckedEntitlements = true
             print(self.isPro ? "✅ User is Pro" : "ℹ️ User is Free")
         }
     }

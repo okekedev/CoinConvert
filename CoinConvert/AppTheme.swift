@@ -24,9 +24,9 @@ struct AppTheme {
     static let operatorButton = gold
     static let numberText = primaryText
 
-    // Border radius
-    static let cornerRadius: CGFloat = 12
-    static let buttonRadius: CGFloat = 10
+    // Square corners throughout, to match the faceted low-poly art.
+    static let cornerRadius: CGFloat = 0
+    static let buttonRadius: CGFloat = 0
 
     // Shadows
     static let shadowColor = Color.black.opacity(0.08)
@@ -78,7 +78,7 @@ struct CalculatorButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.title2.weight(.medium))
+            .font(.app(22, .medium))
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(
                 isEquals ?
@@ -102,5 +102,22 @@ struct CalculatorButtonStyle: ButtonStyle {
             .foregroundColor((isOperator || isEquals) ? .white : AppTheme.primaryText)
             .cornerRadius(AppTheme.buttonRadius)
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+    }
+}
+
+// MARK: - Type
+
+extension Font {
+    /// Chakra Petch, the app's typeface: angular cuts that echo the low-poly
+    /// facets, with even-width numbers. Scales with Dynamic Type.
+    static func app(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font {
+        let face: String
+        switch weight {
+        case .medium: face = "ChakraPetch-Medium"
+        case .semibold: face = "ChakraPetch-SemiBold"
+        case .bold, .heavy, .black: face = "ChakraPetch-Bold"
+        default: face = "ChakraPetch-Regular"
+        }
+        return .custom(face, size: size)
     }
 }

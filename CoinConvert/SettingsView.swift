@@ -4,11 +4,59 @@ import StoreKit
 struct SettingsView: View {
     @EnvironmentObject var exchangeRateManager: ExchangeRateManager
     @EnvironmentObject var storeManager: StoreManager
+    @EnvironmentObject var currencyManager: CurrencyManager
+    @EnvironmentObject var locationDetector: LocationCurrencyDetector
     @Binding var selectedTab: Int
+    @State private var showingHomePicker = false
 
     var body: some View {
         NavigationView {
             List {
+                // Home currency and location
+                Section {
+                    Button(action: { showingHomePicker = true }) {
+                        HStack {
+                            Label("Home currency", systemImage: "house")
+                                .foregroundColor(AppTheme.primaryText)
+                            Spacer()
+                            Text("\(currencyManager.homeCurrency.flag) \(currencyManager.homeCurrency.code)")
+                                .foregroundColor(AppTheme.secondaryText)
+                        }
+                    }
+
+                    if locationDetector.isAuthorized {
+                        HStack {
+                            Label("Detect local currency", systemImage: "location")
+                            Spacer()
+                            Image(systemName: "checkmark")
+                                .foregroundColor(AppTheme.gold)
+                        }
+                    } else if locationDetector.status == .notDetermined {
+                        Button(action: {
+                            locationDetector.requestPermission {
+                                locationDetector.detectCountry { currencyManager.applyDetectedCountry($0) }
+                            }
+                        }) {
+                            Label("Detect local currency", systemImage: "location")
+                        }
+                    } else {
+                        Button(action: {
+                            if let url = URL(string: UIApplication.openSettingsURLString) {
+                                UIApplication.shared.open(url)
+                            }
+                        }) {
+                            Label("Turn on location in Settings", systemImage: "location.slash")
+                        }
+                    }
+                }
+                .listRowBackground(AppTheme.secondaryBackground)
+                .sheet(isPresented: $showingHomePicker) {
+                    CurrencyListView(selectedCurrency: Binding(
+                        get: { currencyManager.homeCurrency },
+                        set: { currencyManager.setHomeCurrency($0) }
+                    ))
+                }
+
                 // Subscription Section
                 Section {
                     if storeManager.isPro {
@@ -18,7 +66,7 @@ struct SettingsView: View {
                             Spacer()
                             Text(storeManager.hasLifetime ? "Lifetime" : "Active")
                                 .foregroundColor(.green)
-                                .font(.subheadline.weight(.medium))
+                                .font(.app(15, .medium))
                         }
 
                         if !storeManager.hasLifetime {
@@ -33,45 +81,18 @@ struct SettingsView: View {
                             }
                         }
                     } else {
+                        // Non-subscribers only see this; tapping anything opens the Pro screen.
                         HStack {
-                            Label("Free", systemImage: "star")
+                            Label("Pro", systemImage: "star")
                             Spacer()
-                            Text("Limited")
+                            Text("Not subscribed")
                                 .foregroundColor(AppTheme.secondaryText)
-                                .font(.subheadline)
                         }
-
-                        Button(action: {
-                            selectedTab = AppTab.scan // Scan tab shows the Pro screen
-                        }) {
-                            HStack {
-                                Label("Upgrade to Pro", systemImage: "lock.open")
-                                    .foregroundColor(AppTheme.gold)
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.caption)
-                                    .foregroundColor(AppTheme.secondaryText)
-                            }
-                        }
-
-                        Button(action: {
-                            Task {
-                                await storeManager.restorePurchases()
-                            }
-                        }) {
-                            HStack {
-                                Label("Restore Purchases", systemImage: "arrow.clockwise")
-                                Spacer()
-                                if storeManager.isLoading {
-                                    ProgressView()
-                                }
-                            }
-                        }
-                        .disabled(storeManager.isLoading)
                     }
                 } header: {
                     Text("Subscription")
                 }
+                .listRowBackground(AppTheme.secondaryBackground)
 
                 // Exchange Rate Section
                 Section {
@@ -102,7 +123,7 @@ struct SettingsView: View {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundColor(.red)
                             Text(error)
-                                .font(.caption)
+                                .font(.app(12))
                                 .foregroundColor(.red)
                         }
                     }
@@ -112,7 +133,7 @@ struct SettingsView: View {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.green)
                             Text("Rates updated successfully")
-                                .font(.caption)
+                                .font(.app(12))
                                 .foregroundColor(.green)
                         }
                     }
@@ -121,6 +142,7 @@ struct SettingsView: View {
                 } footer: {
                     Text("Exchange rates are stored offline and can be updated when you have an internet connection.")
                 }
+                .listRowBackground(AppTheme.secondaryBackground)
 
                 // About Section
                 Section {
@@ -140,6 +162,7 @@ struct SettingsView: View {
                 } header: {
                     Text("About")
                 }
+                .listRowBackground(AppTheme.secondaryBackground)
 
                 // Privacy Section
                 Section {
@@ -151,7 +174,12 @@ struct SettingsView: View {
                 } footer: {
                     Text("Tagwise respects your privacy. Your currency preferences and exchange rates are stored only on your device.")
                 }
+                .listRowBackground(AppTheme.secondaryBackground)
             }
+            // White page like the other screens; square, edge-to-edge grey rows.
+            .listStyle(.grouped)
+            .scrollContentBackground(.hidden)
+            .background(AppTheme.background)
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
         }

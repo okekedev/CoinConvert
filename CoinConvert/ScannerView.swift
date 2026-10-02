@@ -51,7 +51,7 @@ struct ScannerView: View {
                     // Text highlight overlays (already in view coordinates)
                     if isActive {
                         ForEach(cameraManager.recognizedTextBoxes) { item in
-                            RoundedRectangle(cornerRadius: 4)
+                            Rectangle()
                                 .fill(AppTheme.gold.opacity(0.18))
                                 .frame(width: item.rect.width, height: item.rect.height)
                                 .position(x: item.rect.midX, y: item.rect.midY)
@@ -144,23 +144,16 @@ extension ScannerView {
 /// result card pops so the eye lands on it.
 struct ScanReadout: View {
     @EnvironmentObject var currencyManager: CurrencyManager
-    @EnvironmentObject var storeManager: StoreManager
     let sourceAmount: Double?
     let convertedAmount: Double?
     let selectSource: (Currency) -> Void
     let selectDestination: (Currency) -> Void
-    /// Scanner: show locks on Pro currencies. Calculator: every currency is free.
-    var locksProCurrencies = true
     /// Scanner: pop the result when a new price locks in. Calculator: no pop on every key.
     var popsOnChange = true
 
     @State private var showingSourcePicker = false
     @State private var showingDestinationPicker = false
     @State private var popped = false
-
-    private func isLocked(_ currency: Currency) -> Bool {
-        locksProCurrencies && !storeManager.isPro && !CurrencyManager.freeScanPair.contains(currency.code)
-    }
 
     var body: some View {
         HStack(spacing: 10) {
@@ -177,10 +170,10 @@ struct ScanReadout: View {
                 withAnimation(.spring(response: 0.3)) { currencyManager.swapCurrencies() }
             }) {
                 Image(systemName: "arrow.left.arrow.right")
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.app(16, .bold))
                     .foregroundColor(AppTheme.primaryText)
                     .frame(width: 44, height: 44)
-                    .background(Color.white, in: Circle())
+                    .background(Color.white, in: Rectangle())
                     .shadow(color: .black.opacity(0.18), radius: 6, x: 0, y: 2)
             }
             .accessibilityLabel("Swap currencies")
@@ -192,11 +185,11 @@ struct ScanReadout: View {
         }
         .sheet(isPresented: $showingSourcePicker) {
             CurrencyListView(selectedCurrency: Binding(
-                get: { currencyManager.sourceCurrency }, set: selectSource), isLocked: isLocked)
+                get: { currencyManager.sourceCurrency }, set: selectSource))
         }
         .sheet(isPresented: $showingDestinationPicker) {
             CurrencyListView(selectedCurrency: Binding(
-                get: { currencyManager.destinationCurrency }, set: selectDestination), isLocked: isLocked)
+                get: { currencyManager.destinationCurrency }, set: selectDestination))
         }
     }
 }
@@ -213,11 +206,11 @@ struct CurrencyCard: View {
         VStack(alignment: .leading, spacing: 0) {
             Button(action: onChangeCurrency) {
                 HStack(spacing: 6) {
-                    Text(currency.flag).font(.system(size: 26))
+                    Text(currency.flag).font(.app(26))
                     Text(currency.code)
-                        .font(.system(size: 17, weight: .bold))
+                        .font(.app(17, .bold))
                     Image(systemName: "chevron.down")
-                        .font(.system(size: 11, weight: .bold))
+                        .font(.app(11, .bold))
                         .opacity(0.8)
                 }
                 .foregroundColor(.white)
@@ -230,7 +223,7 @@ struct CurrencyCard: View {
             Spacer(minLength: 8)
 
             Text(format(amount ?? 0))
-                .font(.system(size: 40, weight: .heavy, design: .rounded))
+                .font(.app(40, .heavy))
                 .monospacedDigit()
                 .foregroundColor(.white)
                 .opacity(amount == nil ? 0.4 : 1)
@@ -248,7 +241,7 @@ struct CurrencyCard: View {
         .overlay(alignment: .bottom) {
             palette.accent.frame(height: 6)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .clipShape(Rectangle())
         .animation(.easeInOut(duration: 0.3), value: currency.code)
     }
 
@@ -968,7 +961,7 @@ struct FocusIndicator: View {
     @State private var opacity: Double = 1.0
 
     var body: some View {
-        Circle()
+        Rectangle()
             .stroke(AppTheme.gold, lineWidth: 2)
             .frame(width: 70, height: 70)
             .scaleEffect(scale)
