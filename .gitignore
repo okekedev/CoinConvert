@@ -33,3 +33,4 @@ fastlane/test_output
 *.dSYM
 
 __pycache__/
+deployment/screenshots/scenes/

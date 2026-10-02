@@ -1,11 +1,11 @@
 {
-  "identifier": "7B1E0C2A",
+  "identifier": "AFCA2962-9612-4520-AB09-AD3210BF2CBE",
   "nonRenewingSubscriptions": [],
   "products": [
     {
       "displayPrice": "29.99",
       "familyShareable": false,
-      "internalID": "6755900003",
+      "internalID": "DA884FA9-9D10-4863-BF30-18019F24E501",
       "localizations": [
         {
           "description": "Unlock camera scanning forever.",
@@ -20,7 +20,7 @@
     {
       "displayPrice": "14.99",
       "familyShareable": false,
-      "internalID": "6755900004",
+      "internalID": "8A27B40A-74B9-4DF6-A1F5-F7CB9EFD5372",
       "localizations": [
         {
           "description": "Unlock camera scanning forever.",
@@ -38,7 +38,7 @@
   },
   "subscriptionGroups": [
     {
-      "id": "21500001",
+      "id": "729A0488-C29A-4B53-8E40-560B49822368",
       "localizations": [],
       "name": "Tagwise Pro",
       "subscriptions": [
@@ -48,9 +48,9 @@
           "displayPrice": "0.99",
           "familyShareable": false,
           "groupNumber": 2,
-          "internalID": "6755900001",
+          "internalID": "A62DA484-3513-4E02-A3C3-59FBD4C196DA",
           "introductoryOffer": {
-            "internalID": "67559000112",
+            "internalID": "4E38711A-7360-4D7C-B4E7-CCA555DF88C8",
             "paymentMode": "free",
             "subscriptionPeriod": "P3D"
           },
@@ -64,7 +64,7 @@
           "productID": "com.christianokeke.liveexchange.pro.weekly",
           "recurringSubscriptionPeriod": "P1W",
           "referenceName": "Pro Weekly",
-          "subscriptionGroupID": "21500001",
+          "subscriptionGroupID": "729A0488-C29A-4B53-8E40-560B49822368",
           "type": "RecurringSubscription"
         },
         {
@@ -73,9 +73,9 @@
           "displayPrice": "2.99",
           "familyShareable": false,
           "groupNumber": 1,
-          "internalID": "6755900002",
+          "internalID": "2CD4CB4B-1426-460B-83E4-0852B44C45E5",
           "introductoryOffer": {
-            "internalID": "67559000122",
+            "internalID": "E8F4FABD-F7BB-4CFA-95D2-6E6E5F4CA0FE",
             "paymentMode": "free",
             "subscriptionPeriod": "P3D"
           },
@@ -89,7 +89,7 @@
           "productID": "com.christianokeke.liveexchange.pro.monthly",
           "recurringSubscriptionPeriod": "P1M",
           "referenceName": "Pro Monthly",
-          "subscriptionGroupID": "21500001",
+          "subscriptionGroupID": "729A0488-C29A-4B53-8E40-560B49822368",
           "type": "RecurringSubscription"
         }
       ]

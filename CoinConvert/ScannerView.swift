@@ -34,6 +34,11 @@ struct ScannerView: View {
                 CameraAccessOffView()
             } else {
                 ZStack {
+                    if let demoAmount = ScreenshotDemo.scanAmount {
+                        // Screenshot mode: a printed tag stands in for the camera.
+                        DemoPriceTagScene(amount: demoAmount, currency: currencyManager.sourceCurrency,
+                                          scanRect: scanRect(in: geometry.size))
+                    } else {
                     // Camera preview
                     CameraPreviewView(cameraManager: cameraManager, onTapToFocus: { point, devicePoint in
                         focusLocation = point
@@ -47,6 +52,7 @@ struct ScannerView: View {
                         }
                     })
                     .ignoresSafeArea()
+                    }
 
                     // Text highlight overlays (already in view coordinates)
                     if isActive {
@@ -98,7 +104,9 @@ struct ScannerView: View {
         }
         .onAppear {
             cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
-            if isActive {
+            if let demoAmount = ScreenshotDemo.scanAmount {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { scannedAmount = demoAmount }
+            } else if isActive {
                 cameraManager.startSession()
             }
         }
@@ -134,6 +142,72 @@ extension ScannerView {
         let width = bracketWidth + regionPadding * 2
         let height = bracketHeight + regionPadding * 2
         return CGRect(x: (size.width - width) / 2, y: (size.height - height) / 2, width: width, height: height)
+    }
+}
+
+// MARK: - Demo Price Tag (screenshots)
+
+/// A printed price tag on a dark counter, standing in for the camera feed in
+/// screenshot mode. The price sits inside the scan brackets like a real scan.
+struct DemoPriceTagScene: View {
+    let amount: Double
+    let currency: Currency
+    let scanRect: CGRect
+
+    private var priceText: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = currency.code
+        formatter.currencySymbol = currency.symbol
+        formatter.maximumFractionDigits = amount >= 1000 ? 0 : 2
+        return formatter.string(from: NSNumber(value: amount)) ?? "\(amount)"
+    }
+
+    var body: some View {
+        ZStack {
+            RadialGradient(colors: [Color(white: 0.27), Color(white: 0.1)],
+                           center: .center, startRadius: 10, endRadius: 420)
+
+            HStack(spacing: 14) {
+                Circle()
+                    .stroke(Color.black.opacity(0.3), lineWidth: 2)
+                    .frame(width: 14, height: 14)
+                Text(priceText)
+                    .font(.app(46, .bold))
+                    .monospacedDigit()
+                    .foregroundColor(Color(red: 13/255, green: 35/255, blue: 66/255))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
+            }
+            .padding(.leading, 34)
+            .padding(.trailing, 26)
+            .frame(width: scanRect.width * 0.92, height: scanRect.height * 0.9)
+            .background(DemoTagShape().fill(Color(red: 252/255, green: 250/255, blue: 245/255)))
+            .overlay(
+                // Gold highlight where the price was read, like the live scanner.
+                Rectangle()
+                    .fill(AppTheme.gold.opacity(0.18))
+                    .frame(width: scanRect.width * 0.62, height: scanRect.height * 0.55)
+                    .offset(x: 18)
+            )
+            .shadow(color: .black.opacity(0.5), radius: 14, x: 0, y: 8)
+            .rotationEffect(.degrees(-3))
+            .position(x: scanRect.midX, y: scanRect.midY)
+        }
+    }
+}
+
+private struct DemoTagShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        let point = min(rect.height * 0.42, 34)
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX, y: rect.midY))
+        path.addLine(to: CGPoint(x: rect.minX + point, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX + point, y: rect.maxY))
+        path.closeSubpath()
+        return path
     }
 }
 
@@ -183,6 +257,9 @@ struct ScanReadout: View {
             withAnimation(.spring(response: 0.18, dampingFraction: 0.5)) { popped = true }
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7).delay(0.15)) { popped = false }
         }
+        .onAppear {
+            if ScreenshotDemo.opensPicker { showingDestinationPicker = true }
+        }
         .sheet(isPresented: $showingSourcePicker) {
             CurrencyListView(selectedCurrency: Binding(
                 get: { currencyManager.sourceCurrency }, set: selectSource))
@@ -218,7 +295,7 @@ struct CurrencyCard: View {
                 .frame(minHeight: 44, alignment: .leading)
                 .contentShape(Rectangle())
             }
-            .accessibilityLabel("\(currency.name). Change currency")
+            .accessibilityLabel("\(currency.localizedName). Change currency")
 
             Spacer(minLength: 8)
 

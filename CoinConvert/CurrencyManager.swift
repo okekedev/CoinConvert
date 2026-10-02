@@ -6,6 +6,8 @@ class CurrencyManager: ObservableObject {
     @Published var destinationCurrency: Currency
     /// What prices get converted into. Set in onboarding; defaults to the phone's region.
     @Published var homeCurrency: Currency
+    /// Last country the phone was found in (ISO code), shown in Settings.
+    @Published private(set) var detectedCountry: String?
 
     private let sourceKey = "com.coinconvert.sourcecurrency"
     private let destinationKey = "com.coinconvert.destinationcurrency"
@@ -14,6 +16,7 @@ class CurrencyManager: ObservableObject {
     private let userDefaults = UserDefaults.standard
 
     init() {
+        detectedCountry = UserDefaults.standard.string(forKey: "com.coinconvert.lastcountry")
         if let homeCode = userDefaults.string(forKey: homeKey), let home = Currency.currency(for: homeCode) {
             self.homeCurrency = home
         } else {
@@ -72,6 +75,7 @@ class CurrencyManager: ObservableObject {
     func applyDetectedCountry(_ countryCode: String) {
         guard countryCode != userDefaults.string(forKey: lastCountryKey) else { return }
         userDefaults.set(countryCode, forKey: lastCountryKey)
+        detectedCountry = countryCode
 
         guard let local = Self.currency(forCountry: countryCode), local != homeCurrency else { return }
         setSourceCurrency(local)

@@ -62,6 +62,7 @@ struct CurrencyListView: View {
         guard !searchText.isEmpty else { return Currency.supportedCurrencies }
         return Currency.supportedCurrencies.filter {
             $0.name.localizedCaseInsensitiveContains(searchText) ||
+            $0.localizedName.localizedCaseInsensitiveContains(searchText) ||
             $0.code.localizedCaseInsensitiveContains(searchText)
         }
     }
@@ -169,7 +170,7 @@ struct CurrencyListView: View {
             .background(palette.primary, in: Rectangle())
             .overlay(Rectangle().stroke(AppTheme.gold, lineWidth: isSelected ? 2.5 : 0))
         }
-        .accessibilityLabel("\(currency.name)\(isLocked(currency) ? ", Pro" : "")")
+        .accessibilityLabel("\(currency.localizedName)\(isLocked(currency) ? ", Pro" : "")")
     }
 
     private func row(_ currency: Currency) -> some View {
@@ -186,7 +187,7 @@ struct CurrencyListView: View {
                     Text(currency.code)
                         .font(.app(17, .bold))
                         .foregroundColor(AppTheme.primaryText)
-                    Text(currency.name)
+                    Text(currency.localizedName)
                         .font(.app(14))
                         .foregroundColor(AppTheme.secondaryText)
                         .lineLimit(1)
@@ -210,7 +211,7 @@ struct CurrencyListView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(currency.name)\(isLocked(currency) ? ", Pro" : "")")
+        .accessibilityLabel("\(currency.localizedName)\(isLocked(currency) ? ", Pro" : "")")
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 

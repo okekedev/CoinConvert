@@ -55,7 +55,7 @@ KNOWN LIMITATIONS:
 SUBSCRIPTION INFORMATION:
 - Tagwise requires a subscription or Lifetime purchase. After the short onboarding, the Pro screen is shown.
 - Plans: Weekly $0.99 and Monthly $2.99 (auto-renewing, 3-day free trial for new subscribers), Lifetime $29.99 (one-time purchase).
-- The close (X) button on the Pro screen appears at most once per day and opens a one-time Lifetime offer at $14.99 (a separate one-time purchase).
+- Closing the Pro screen (X) opens an offer screen for Lifetime at $14.99 (a separate one-time purchase). "No thanks" returns to the app.
 - To test: complete onboarding, choose a plan and tap "Start Free Trial" or "Unlock Forever". Restore Purchases is on the Pro screen.
 
 Thank you for reviewing Tagwise!

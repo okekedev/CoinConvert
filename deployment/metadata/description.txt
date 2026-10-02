@@ -16,6 +16,9 @@ CURRENCY CALCULATOR
 • Live conversion updates as you type
 • Swap currencies in one tap
 
+AUTOMATIC LOCAL CURRENCY
+Pick your home currency once. When you travel, Tagwise detects the country and sets the local currency for you.
+
 150+ CURRENCIES
 US Dollar, Euro, British Pound, Japanese Yen, Mexican Peso, Canadian Dollar, Australian Dollar, Swiss Franc, Chinese Yuan, Indian Rupee, Thai Baht, Korean Won, UAE Dirham, Brazilian Real, South African Rand and many more.
 

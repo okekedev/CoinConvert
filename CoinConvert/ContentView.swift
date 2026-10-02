@@ -8,7 +8,7 @@ struct ContentView: View {
     @EnvironmentObject var locationDetector: LocationCurrencyDetector
     // Launch arg `-initialTab N` opens another tab for screenshots.
     @State private var selectedTab = UserDefaults.standard.integer(forKey: "initialTab")
-    @State private var converterMode = ConverterTab.Mode.calculator
+    @State private var converterMode: ConverterTab.Mode = ScreenshotDemo.startsInScan ? .scan : .calculator
     @State private var showPaywall = false
     @AppStorage(OnboardingState.key) private var hasOnboarded = false
 
@@ -100,9 +100,9 @@ struct AppTabBar: View {
 
         var label: String {
             switch self {
-            case .calculator: return "Calculator"
-            case .scan: return "Scan"
-            case .settings: return "Settings"
+            case .calculator: return String(localized: "Calculator")
+            case .scan: return String(localized: "Scan")
+            case .settings: return String(localized: "Settings")
             }
         }
     }
@@ -306,6 +306,13 @@ struct ConverterTab: View {
         .padding(.top, 8)
         .padding(.bottom, 12)
         .background(AppTheme.background)
+        .onAppear {
+            if let value = ScreenshotDemo.calculatorValue {
+                calculatorDisplay = formatNumber(value)
+                calculatorResult = value
+                updateCalculatorConversion(from: value)
+            }
+        }
         .onChange(of: mode) { _, newMode in
             switch newMode {
             case .calculator:
@@ -358,8 +365,7 @@ struct ConverterTab: View {
 // MARK: - Paywall
 
 /// Full-screen Pro screen, opened when a non-subscriber taps anything. Closing it
-/// shows the half-price lifetime offer (at most once a day), then returns to the
-/// home screen.
+/// shows the half-price lifetime offer screen; "No thanks" returns to the home screen.
 struct PaywallView: View {
     @EnvironmentObject var storeManager: StoreManager
     let onClose: () -> Void
@@ -370,7 +376,6 @@ struct PaywallView: View {
     @State private var selectedProductID = StoreManager.monthlyID
     @State private var trialEligibleIDs: Set<String> = []
     @State private var showExitOffer = false
-    @AppStorage("exitOfferLastShown") private var exitOfferLastShown: Double = 0
 
     // Secret unlock sequence: left dot 4 times
     @State private var secretTapCount: Int = 0
@@ -378,7 +383,6 @@ struct PaywallView: View {
 
     private var exitOfferAvailable: Bool {
         storeManager.lifetimeOfferProduct != nil && storeManager.lifetimeProduct != nil
-            && Date().timeIntervalSince1970 - exitOfferLastShown >= 24 * 60 * 60
     }
 
     var body: some View {
@@ -446,7 +450,7 @@ struct PaywallView: View {
                         do {
                             if try await storeManager.purchase(offer) { showExitOffer = false }
                         } catch {
-                            purchaseErrorMessage = "Unable to complete purchase. Please try again."
+                            purchaseErrorMessage = String(localized: "Couldn't complete the purchase. Try again.")
                             showPurchaseError = true
                         }
                     }
@@ -468,7 +472,6 @@ struct PaywallView: View {
             onClose()
             return
         }
-        exitOfferLastShown = Date().timeIntervalSince1970
         showExitOffer = true
     }
 
@@ -488,7 +491,7 @@ struct PaywallView: View {
                     do {
                         _ = try await storeManager.purchase(product)
                     } catch {
-                        purchaseErrorMessage = "Unable to complete purchase. Please try again."
+                        purchaseErrorMessage = String(localized: "Couldn't complete the purchase. Try again.")
                         showPurchaseError = true
                     }
                 }
@@ -572,8 +575,8 @@ struct PaywallView: View {
 
     private func planBadge(for product: Product) -> String? {
         switch product.id {
-        case StoreManager.monthlyID: return "Most Popular"
-        case StoreManager.lifetimeID: return "Best Value"
+        case StoreManager.monthlyID: return String(localized: "Most Popular")
+        case StoreManager.lifetimeID: return String(localized: "Best Value")
         default: return nil
         }
     }
@@ -582,21 +585,21 @@ struct PaywallView: View {
         guard trialEligibleIDs.contains(product.id),
               let offer = product.subscription?.introductoryOffer,
               offer.paymentMode == .freeTrial else { return nil }
-        return "\(offer.period.value)-\(offer.period.unit.label) free trial"
+        return String(localized: "Free for \(offer.period.durationText)")
     }
 
     private func purchaseButtonTitle(for product: Product) -> String {
-        if product.id == StoreManager.lifetimeID { return "Unlock Forever" }
-        return trialText(for: product) == nil ? "Subscribe" : "Start Free Trial"
+        if product.id == StoreManager.lifetimeID { return String(localized: "Unlock Forever") }
+        return trialText(for: product) == nil ? String(localized: "Subscribe") : String(localized: "Start Free Trial")
     }
 
     private func purchaseDisclosure(for product: Product) -> String {
         guard let period = product.subscription?.subscriptionPeriod else {
-            return "One-time purchase of \(product.displayPrice). No subscription."
+            return String(localized: "One-time purchase of \(product.displayPrice). No subscription.")
         }
-        let renewal = "\(product.displayPrice)/\(period.unit.label)"
-        let lead = trialText(for: product).map { "\($0.capitalizedFirst), then \(renewal)." } ?? "\(renewal)."
-        return "\(lead) Renews automatically unless cancelled at least 24 hours before the end of the period. Manage in Settings."
+        let renewal = "\(product.displayPrice) / \(period.unitLabel)"
+        let lead = trialText(for: product).map { String(localized: "\($0), then \(renewal).") } ?? "\(renewal)."
+        return lead + " " + String(localized: "Auto-renews, cancel anytime.")
     }
 
     private func loadTrialEligibility() async {
@@ -852,9 +855,19 @@ struct PlanOptionRow: View {
     let badge: String?
     let isSelected: Bool
 
+    /// Our own plan names (translated), not App Store Connect's display names,
+    /// which can't be edited once a subscription is approved.
+    private var planName: String {
+        switch product.id {
+        case StoreManager.weeklyID: return String(localized: "Weekly")
+        case StoreManager.monthlyID: return String(localized: "Monthly")
+        default: return String(localized: "Lifetime")
+        }
+    }
+
     private var periodText: String {
-        guard let period = product.subscription?.subscriptionPeriod else { return "one time" }
-        return "per \(period.unit.label)"
+        guard let period = product.subscription?.subscriptionPeriod else { return String(localized: "one time") }
+        return String(localized: "per \(period.unitLabel)")
     }
 
     var body: some View {
@@ -864,7 +877,7 @@ struct PlanOptionRow: View {
                 .foregroundColor(isSelected ? AppTheme.gold : AppTheme.secondaryText.opacity(0.5))
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(product.displayName)
+                Text(planName)
                     .font(.app(16, .semibold))
                     .foregroundColor(AppTheme.primaryText)
                 if let badge {
@@ -900,15 +913,35 @@ struct PlanOptionRow: View {
 private extension Product.SubscriptionPeriod.Unit {
     var label: String {
         switch self {
-        case .day: return "day"
-        case .week: return "week"
-        case .month: return "month"
-        case .year: return "year"
-        @unknown default: return "period"
+        case .day: return String(localized: "day")
+        case .week: return String(localized: "week")
+        case .month: return String(localized: "month")
+        case .year: return String(localized: "year")
+        @unknown default: return String(localized: "period")
         }
     }
 }
 
-private extension String {
-    var capitalizedFirst: String { prefix(1).uppercased() + dropFirst() }
+private extension Product.SubscriptionPeriod {
+    /// Billing unit for "per week" / "$0.99 / week". StoreKit can report a one-week
+    /// period as 7 days, so whole weeks of days are shown as weeks.
+    var unitLabel: String {
+        if unit == .day && value % 7 == 0 { return Unit.week.label }
+        return unit.label
+    }
+
+    /// "3 days", "1 week" in the user's language.
+    var durationText: String {
+        var components = DateComponents()
+        switch unit {
+        case .day: components.day = value
+        case .week: components.weekOfMonth = value
+        case .month: components.month = value
+        case .year: components.year = value
+        @unknown default: components.day = value
+        }
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .full
+        return formatter.string(from: components) ?? "\(value)"
+    }
 }

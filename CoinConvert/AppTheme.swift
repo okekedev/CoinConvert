@@ -121,3 +121,27 @@ extension Font {
         return .custom(face, size: size)
     }
 }
+
+// MARK: - Screenshot demo mode
+
+/// Launch arguments for App Store screenshots (debug builds only; inert in release):
+/// `-demoPro YES` unlock, `-demoMode scan`, `-demoScanAmount 24.5` printed tag instead of
+/// the camera, `-demoCalculator 86.4` preset calculator value, `-demoPicker YES` open the
+/// currency list.
+enum ScreenshotDemo {
+    #if DEBUG
+    private static let defaults = UserDefaults.standard
+    static var isPro: Bool { defaults.bool(forKey: "demoPro") }
+    static var startsInScan: Bool { defaults.string(forKey: "demoMode") == "scan" }
+    static var scanAmount: Double? { positive(defaults.double(forKey: "demoScanAmount")) }
+    static var calculatorValue: Double? { positive(defaults.double(forKey: "demoCalculator")) }
+    static var opensPicker: Bool { defaults.bool(forKey: "demoPicker") }
+    private static func positive(_ value: Double) -> Double? { value > 0 ? value : nil }
+    #else
+    static let isPro = false
+    static let startsInScan = false
+    static let scanAmount: Double? = nil
+    static let calculatorValue: Double? = nil
+    static let opensPicker = false
+    #endif
+}

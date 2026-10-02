@@ -136,7 +136,7 @@ struct OnboardingView: View {
                         .opacity(0.8)
                 }
                 Spacer()
-                Text(home.name)
+                Text(home.localizedName)
                     .font(.app(20, .semibold))
             }
             .foregroundColor(.white)
@@ -150,7 +150,7 @@ struct OnboardingView: View {
             .clipShape(Rectangle())
             .shadow(color: .black.opacity(0.35), radius: 18, x: 0, y: 10)
         }
-        .accessibilityLabel("Home currency: \(home.name). Tap to change.")
+        .accessibilityLabel("Home currency: \(home.localizedName). Tap to change.")
     }
 
     private var cameraVisual: some View {
@@ -168,25 +168,25 @@ struct OnboardingView: View {
 
     private var headline: String {
         switch step {
-        case .demo: return "Point at any price."
-        case .home: return "Your home currency."
-        case .camera: return "Allow the camera."
+        case .demo: return String(localized: "Point at any price.")
+        case .home: return String(localized: "Your home currency.")
+        case .camera: return String(localized: "Allow the camera.")
         }
     }
 
     private var message: String {
         switch step {
-        case .demo: return "See tags, menus and receipts in your money."
-        case .home: return "Prices convert to this. When you travel, the local currency is picked for you."
-        case .camera: return "Used only to read prices. Nothing is saved."
+        case .demo: return String(localized: "See it in your money.")
+        case .home: return String(localized: "We convert to this.")
+        case .camera: return String(localized: "Only used to read prices.")
         }
     }
 
     private var buttonTitle: String {
         switch step {
-        case .demo: return "Continue"
-        case .home: return needsCameraStep ? "Continue" : "Get started"
-        case .camera: return "Allow camera"
+        case .demo: return String(localized: "Continue")
+        case .home: return needsCameraStep ? String(localized: "Continue") : String(localized: "Get started")
+        case .camera: return String(localized: "Allow camera")
         }
     }
 

@@ -1,5 +1,6 @@
 Real Time Currency Conversion is now Tagwise!
 
-• New name, same instant camera price conversion
+• New look, with the calculator and scanner on one screen
+• Local currency picked automatically when you travel
 • Exchange rates now update reliably
-• New plans: Weekly, Monthly or Lifetime, with a 3-day free trial on subscriptions
+• Plans: Weekly or Monthly with a 3-day free trial, or Lifetime

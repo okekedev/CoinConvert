@@ -10,6 +10,11 @@ struct Currency: Identifiable, Codable, Hashable {
 
     var code: String { id }
 
+    /// Currency name in the user's language ("Japanese Yen" / "日本円"), falling back to English.
+    var localizedName: String {
+        Locale.current.localizedString(forCurrencyCode: code)?.capitalizedFirstLetter ?? name
+    }
+
     static let supportedCurrencies: [Currency] = [
         // Major World Currencies
         Currency(id: "USD", name: "US Dollar", symbol: "$", flag: "🇺🇸"),
@@ -356,4 +361,8 @@ enum CalculatorOperation {
         case .divide: return "÷"
         }
     }
+}
+
+private extension String {
+    var capitalizedFirstLetter: String { prefix(1).uppercased() + dropFirst() }
 }

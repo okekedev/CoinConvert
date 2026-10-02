@@ -117,9 +117,9 @@ enum ExchangeRateError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .invalidURL: return "Invalid API URL"
-        case .networkError: return "Network connection failed"
-        case .invalidData: return "Unable to parse exchange rate data"
+        case .invalidURL: return String(localized: "Couldn't reach the exchange rate service.")
+        case .networkError: return String(localized: "No connection. Rates will update when you're online.")
+        case .invalidData: return String(localized: "Couldn't read the latest rates. Try again later.")
         }
     }
 }

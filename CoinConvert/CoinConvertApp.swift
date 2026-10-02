@@ -29,8 +29,16 @@ struct CoinConvertApp: App {
                 }
                 .onChange(of: scenePhase) { _, phase in
                     // Each time the app comes forward, check which country we're in.
-                    if phase == .active, UserDefaults.standard.bool(forKey: OnboardingState.key) {
-                        locationDetector.detectCountry { currencyManager.applyDetectedCountry($0) }
+                    guard phase == .active, UserDefaults.standard.bool(forKey: OnboardingState.key),
+                          !ScreenshotDemo.isPro else { return }  // screenshots keep the currencies they're given
+                    let detect = { locationDetector.detectCountry { currencyManager.applyDetectedCountry($0) } }
+                    // People who updated skipped the onboarding step that asks, so ask once here.
+                    let askedKey = "locationAskedAfterUpdate"
+                    if locationDetector.status == .notDetermined, !UserDefaults.standard.bool(forKey: askedKey) {
+                        UserDefaults.standard.set(true, forKey: askedKey)
+                        locationDetector.requestPermission(completion: detect)
+                    } else {
+                        detect()
                     }
                 }
         }

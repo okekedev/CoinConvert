@@ -114,7 +114,7 @@ class StoreManager: ObservableObject {
 
     // MARK: - Pro Status
     func updateProStatus() async {
-        if ENABLE_PRO_FOR_DEVELOPMENT {
+        if ENABLE_PRO_FOR_DEVELOPMENT || ScreenshotDemo.isPro {
             DispatchQueue.main.async {
                 self.isPro = true
                 self.hasCheckedEntitlements = true

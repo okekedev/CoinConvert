@@ -28,8 +28,14 @@ struct SettingsView: View {
                         HStack {
                             Label("Detect local currency", systemImage: "location")
                             Spacer()
-                            Image(systemName: "checkmark")
-                                .foregroundColor(AppTheme.gold)
+                            if let code = currencyManager.detectedCountry {
+                                // Shows where we think you are, even at home where nothing changes.
+                                Text("\(flag(for: code)) \(Locale.current.localizedString(forRegionCode: code) ?? code)")
+                                    .foregroundColor(AppTheme.secondaryText)
+                            } else {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(AppTheme.gold)
+                            }
                         }
                     } else if locationDetector.status == .notDetermined {
                         Button(action: {
@@ -185,5 +191,11 @@ struct SettingsView: View {
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
-}
 
+    /// Regional-indicator emoji flag for an ISO country code ("US" -> 🇺🇸).
+    private func flag(for countryCode: String) -> String {
+        countryCode.uppercased().unicodeScalars
+            .compactMap { UnicodeScalar(127397 + $0.value) }
+            .map(String.init).joined()
+    }
+}
