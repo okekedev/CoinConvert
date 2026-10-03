@@ -34,7 +34,14 @@ struct ScannerView: View {
                 CameraAccessOffView()
             } else {
                 ZStack {
-                    if let demoAmount = ScreenshotDemo.scanAmount {
+                    if let photo = ScreenshotDemo.scanImage {
+                        // Screenshot mode: a real camera frame stands in for the live feed.
+                        Image(uiImage: photo)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .clipped()
+                    } else if let demoAmount = ScreenshotDemo.scanAmount {
                         // Screenshot mode: a printed tag stands in for the camera.
                         DemoPriceTagScene(amount: demoAmount, currency: currencyManager.sourceCurrency,
                                           scanRect: scanRect(in: geometry.size))
@@ -75,11 +82,13 @@ struct ScannerView: View {
                         .allowsHitTesting(false)
                     }
 
-                    // Bracket overlay (visual guide)
-                    ScanBrackets()
-                        .frame(width: bracketWidth, height: bracketHeight)
-                        .position(x: centerX, y: centerY)
-                        .allowsHitTesting(false)
+                    // Bracket overlay (visual guide); a demo photo already has its own.
+                    if ScreenshotDemo.scanImage == nil {
+                        ScanBrackets()
+                            .frame(width: bracketWidth, height: bracketHeight)
+                            .position(x: centerX, y: centerY)
+                            .allowsHitTesting(false)
+                    }
 
                     // Focus indicator
                     if showFocusIndicator {
@@ -508,9 +517,12 @@ class CameraManager: NSObject, ObservableObject {
         // Get the best available camera for close-up scanning
         // Priority: Triple camera (Pro models) > Dual Wide > Wide Angle
         // Triple/DualWide cameras support automatic macro switching
-        // Main (wide) lens only. Multi-lens virtual cameras switch lenses as you
-        // move closer, which shows up as sudden zoom jumps and focus hunting.
-        let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back)
+        // Multi-lens camera when available, like the Camera app: it switches to the
+        // ultra-wide's macro focus when you get close, so near prices stay sharp.
+        // (The main lens alone can't focus closer than ~20 cm on Pro iPhones.)
+        let camera = AVCaptureDevice.default(.builtInTripleCamera, for: .video, position: .back)
+            ?? AVCaptureDevice.default(.builtInDualWideCamera, for: .video, position: .back)
+            ?? AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back)
 
         guard let camera = camera else {
             print("❌ No back camera available")
@@ -525,7 +537,12 @@ class CameraManager: NSObject, ObservableObject {
             try camera.lockForConfiguration()
 
             // Start wide so the price is easy to find; zoomInOnce() tightens it shortly after.
-            camera.videoZoomFactor = 1
+            // Let the system pick the lens (macro up close), and start at the
+            // main lens's "1x" view rather than the ultra-wide.
+            if camera.activePrimaryConstituentDeviceSwitchingBehavior != .unsupported {
+                camera.setPrimaryConstituentDeviceSwitchingBehavior(.auto, restrictedSwitchingBehaviorConditions: [])
+            }
+            camera.videoZoomFactor = Self.mainLensZoom(for: camera)
 
             // Enable continuous autofocus - this is the key for instant focus
             if camera.isFocusModeSupported(.continuousAutoFocus) {
@@ -570,6 +587,11 @@ class CameraManager: NSObject, ObservableObject {
             if captureSession.canAddInput(input) {
                 captureSession.addInput(input)
             }
+            // 4K where the camera supports it (checked after the input is attached):
+            // zoomed-in price text stays sharp for the eye and for Vision.
+            if captureSession.canSetSessionPreset(.hd4K3840x2160) {
+                captureSession.sessionPreset = .hd4K3840x2160
+            }
         } catch {
             print("❌ Could not create camera input: \(error)")
             captureSession.commitConfiguration()
@@ -611,10 +633,7 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
-    /// After a moment on the wide view, smoothly zoom in once, just enough that a
-    /// price fills the brackets while the phone is still beyond the lens's closest
-    /// focus distance. Without this, people hold the phone too close and it can't focus.
-    /// (Same approach as Apple's barcode-scanning sample.)
+    /// After a moment on the 1x view, smoothly zoom in a little, once.
     private func zoomInOnce() {
         guard !hasZoomedIn, let device = device else { return }
         hasZoomedIn = true
@@ -631,23 +650,16 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
 
+    /// Zoom factor of the main ("1x") lens. On multi-lens virtual cameras zoom 1.0 is
+    /// the ultra-wide, and the main lens starts at the first switch-over factor.
+    static func mainLensZoom(for device: AVCaptureDevice) -> CGFloat {
+        device.virtualDeviceSwitchOverVideoZoomFactors.first.map { CGFloat(truncating: $0) } ?? 1
+    }
+
+    /// One gentle zoom past the main lens so a price fills more of the brackets.
+    /// Kept small: macro switching handles close focus, and heavy digital zoom blurs.
     static func focusFriendlyZoom(for device: AVCaptureDevice) -> CGFloat {
-        let priceWidthMM: Double = 30          // a printed price like "£24.00"
-        let fillOfPreviewWidth: Double = 0.5   // about 60% of the bracket width
-        let minimumFocusMM = Double(device.minimumFocusDistance)
-        guard minimumFocusMM > 0 else { return 1.15 }
-
-        // videoFieldOfView is across the sensor's long side; the preview is portrait,
-        // so its width is the short side.
-        let dimensions = CMVideoFormatDescriptionGetDimensions(device.activeFormat.formatDescription)
-        let shortOverLong = Double(min(dimensions.width, dimensions.height)) / Double(max(dimensions.width, dimensions.height))
-        let longHalfFOV = Double(device.activeFormat.videoFieldOfView) / 2 * .pi / 180
-        let shortHalfFOV = atan(tan(longHalfFOV) * shortOverLong)
-
-        // Distance at which the price spans the target share of the preview width at 1x.
-        let distanceAt1x = (priceWidthMM / fillOfPreviewWidth) / (2 * tan(shortHalfFOV))
-        let zoom = max(1.15, minimumFocusMM / distanceAt1x)
-        return min(CGFloat(zoom), min(2.5, device.maxAvailableVideoZoomFactor))
+        min(mainLensZoom(for: device) * 1.25, device.maxAvailableVideoZoomFactor)
     }
 
     func stopSession() {

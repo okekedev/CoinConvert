@@ -366,7 +366,8 @@ struct ConverterTab: View {
 // MARK: - Paywall
 
 /// Full-screen Pro screen, opened when a non-subscriber taps anything. Closing it
-/// shows the half-price lifetime offer screen; "No thanks" returns to the home screen.
+/// shows the half-price lifetime offer at most once every 3 days; otherwise close
+/// just returns to the home screen.
 struct PaywallView: View {
     @EnvironmentObject var storeManager: StoreManager
     let onClose: () -> Void
@@ -377,6 +378,8 @@ struct PaywallView: View {
     @State private var selectedProductID = StoreManager.monthlyID
     @State private var trialEligibleIDs: Set<String> = []
     @State private var showExitOffer = false
+    @AppStorage("exitOfferLastShown") private var exitOfferLastShown: Double = 0
+    private static let exitOfferInterval: TimeInterval = 3 * 24 * 60 * 60
 
     // Secret unlock sequence: left dot 4 times
     @State private var secretTapCount: Int = 0
@@ -384,6 +387,8 @@ struct PaywallView: View {
 
     private var exitOfferAvailable: Bool {
         storeManager.lifetimeOfferProduct != nil && storeManager.lifetimeProduct != nil
+            && (ScreenshotDemo.opensOffer
+                || Date().timeIntervalSince1970 - exitOfferLastShown >= Self.exitOfferInterval)
     }
 
     var body: some View {
@@ -474,6 +479,7 @@ struct PaywallView: View {
             onClose()
             return
         }
+        exitOfferLastShown = Date().timeIntervalSince1970
         showExitOffer = true
     }
 

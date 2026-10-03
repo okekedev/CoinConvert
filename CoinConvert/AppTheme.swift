@@ -127,16 +127,27 @@ extension Font {
 /// Launch arguments for App Store screenshots (debug builds only; inert in release):
 /// `-demoPro YES` unlock, `-demoMode scan`, `-demoScanAmount 24.5` printed tag instead of
 /// the camera, `-demoCalculator 86.4` preset calculator value, `-demoPicker YES` open the
-/// currency list, `-demoPaywall YES` open the Pro screen, `-demoOffer YES` then press close.
+/// currency list, `-demoPaywall YES` open the Pro screen, `-demoOffer YES` then press close,
+/// `-demoScanImage /path.png` a real camera frame (with its own brackets) behind the scanner.
 enum ScreenshotDemo {
     #if DEBUG
     private static let defaults = UserDefaults.standard
-    static var isPro: Bool { defaults.bool(forKey: "demoPro") }
+    /// Sticky on debug installs: launch once with `-demoPro YES` and it stays Pro across
+    /// normal relaunches until launched with `-demoPro NO`.
+    static var isPro: Bool {
+        if let flag = defaults.volatileDomain(forName: UserDefaults.argumentDomain)["demoPro"] {
+            defaults.set((flag as? String).map { ["YES", "1", "true"].contains($0) } ?? (flag as? Bool ?? false),
+                         forKey: "demoProSticky")
+        }
+        return defaults.bool(forKey: "demoProSticky")
+    }
     static var startsInScan: Bool { defaults.string(forKey: "demoMode") == "scan" }
     static var scanAmount: Double? { positive(defaults.double(forKey: "demoScanAmount")) }
     static var calculatorValue: Double? { positive(defaults.double(forKey: "demoCalculator")) }
     static var opensPicker: Bool { defaults.bool(forKey: "demoPicker") }
     static var opensPaywall: Bool { defaults.bool(forKey: "demoPaywall") }
+    /// A real camera frame (file path) shown in place of the live camera.
+    static var scanImage: UIImage? { defaults.string(forKey: "demoScanImage").flatMap(UIImage.init(contentsOfFile:)) }
     static var opensOffer: Bool { defaults.bool(forKey: "demoOffer") }
     private static func positive(_ value: Double) -> Double? { value > 0 ? value : nil }
     #else
@@ -146,6 +157,7 @@ enum ScreenshotDemo {
     static let calculatorValue: Double? = nil
     static let opensPicker = false
     static let opensPaywall = false
+    static let scanImage: UIImage? = nil
     static let opensOffer = false
     #endif
 }

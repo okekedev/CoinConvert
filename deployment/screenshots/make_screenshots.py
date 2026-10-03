@@ -30,23 +30,24 @@ DEVICES = {
     "ipad": dict(udid="A833035C-6B0B-40AB-8284-D8A83F7E368D", shot_width=0.70, top=600, title=124, sub=60),
 }
 
-# ASC locale: (app language, region, home currency, travel currency, scan amount, calculator amount)
+# ASC locale: (app language, region, home currency, tag currency, scan amount, calculator amount)
+# The scan uses a real photo of a "$44.99" tag (source/scan-usd.png); en-US uses a copy
+# with "€" so the US shot converts into dollars (source/scan-eur.png).
+SCAN_AMOUNT = 44.99
 LOCALES = {
-    "en-US": ("en", "en_US", "USD", "EUR", 24.5, 86.4),
-    "en-GB": ("en-GB", "en_GB", "GBP", "EUR", 24.5, 86.4),
-    "en-AU": ("en-AU", "en_AU", "AUD", "JPY", 4800, 12800),
-    "en-CA": ("en-CA", "en_CA", "CAD", "USD", 24.5, 86.4),
-    "es-ES": ("es", "es_ES", "EUR", "USD", 24.5, 86.4),
-    "es-MX": ("es-MX", "es_MX", "MXN", "USD", 24.5, 86.4),
-    "fr-FR": ("fr", "fr_FR", "EUR", "USD", 24.5, 86.4),
-    "fr-CA": ("fr-CA", "fr_CA", "CAD", "EUR", 24.5, 86.4),
-    "de-DE": ("de", "de_DE", "EUR", "USD", 24.5, 86.4),
-    "it": ("it", "it_IT", "EUR", "USD", 24.5, 86.4),
-    "pt-BR": ("pt-BR", "pt_BR", "BRL", "USD", 24.5, 86.4),
-    "ja": ("ja", "ja_JP", "JPY", "USD", 24.5, 86.4),
-    "ko": ("ko", "ko_KR", "KRW", "JPY", 4800, 12800),
-    "zh-Hans": ("zh-Hans", "zh_CN", "CNY", "JPY", 4800, 12800),
+    "en-US": ("en", "en_US", "USD", "EUR"), "en-GB": ("en-GB", "en_GB", "GBP", "USD"),
+    "en-AU": ("en-AU", "en_AU", "AUD", "USD"), "en-CA": ("en-CA", "en_CA", "CAD", "USD"),
+    "es-ES": ("es", "es_ES", "EUR", "USD"), "es-MX": ("es-MX", "es_MX", "MXN", "USD"),
+    "fr-FR": ("fr", "fr_FR", "EUR", "USD"), "fr-CA": ("fr-CA", "fr_CA", "CAD", "USD"),
+    "de-DE": ("de", "de_DE", "EUR", "USD"), "it": ("it", "it_IT", "EUR", "USD"),
+    "pt-BR": ("pt-BR", "pt_BR", "BRL", "USD"), "pt-PT": ("pt-PT", "pt_PT", "EUR", "USD"),
+    "nl-NL": ("nl", "nl_NL", "EUR", "USD"), "ru": ("ru", "ru_RU", "RUB", "USD"),
+    "tr": ("tr", "tr_TR", "TRY", "USD"), "th": ("th", "th_TH", "THB", "USD"),
+    "id": ("id", "id_ID", "IDR", "USD"),
+    "ja": ("ja", "ja_JP", "JPY", "USD"), "ko": ("ko", "ko_KR", "KRW", "USD"),
+    "zh-Hans": ("zh-Hans", "zh_CN", "CNY", "USD"), "zh-Hant": ("zh-Hant", "zh_TW", "TWD", "USD"),
 }
+SCAN_IMAGES = {"USD": OUT / "source" / "scan-usd.png", "EUR": OUT / "source" / "scan-eur.png"}
 
 EN = [("Point. Scan. Done.", "Prices convert as you look"),
       ("Split it. Tip it.", "A calculator for every currency"),
@@ -74,6 +75,24 @@ HEADLINES = {
     "ko": [("비추면 바로 환산", "가격표를 내 통화로"),
            ("더치페이도 팁도", "모든 통화를 위한 계산기"),
            ("150개 이상의 통화", "오프라인, 계정 없이")],
+    "nl": [("Richten. Scannen. Klaar.", "Prijzen direct omgerekend"),
+           ("Delen. Fooi erbij.", "Rekenmachine in elke valuta"),
+           ("150+ valuta's", "Offline, zonder account")],
+    "ru": [("Навёл. Отсканировал.", "Цены сразу в вашей валюте"),
+           ("Делите счёт и чаевые", "Калькулятор в любой валюте"),
+           ("Более 150 валют", "Офлайн и без аккаунта")],
+    "tr": [("Tut. Tara. Tamam.", "Fiyatlar anında çevrilir"),
+           ("Böl. Bahşiş ekle.", "Her para birimi için hesap makinesi"),
+           ("150+ para birimi", "Çevrimdışı, hesapsız")],
+    "th": [("ส่อง สแกน เสร็จ", "แปลงราคาทันทีที่มอง"),
+           ("หารบิล ใส่ทิป", "เครื่องคิดเลขทุกสกุลเงิน"),
+           ("กว่า 150 สกุลเงิน", "ใช้ออฟไลน์ ไม่ต้องมีบัญชี")],
+    "id": [("Arahkan. Pindai. Beres.", "Harga langsung terkonversi"),
+           ("Bagi tagihan, tambah tip", "Kalkulator untuk semua mata uang"),
+           ("150+ mata uang", "Offline, tanpa akun")],
+    "zh-Hant": [("一掃即換算", "價格標籤秒變你的貨幣"),
+                ("分帳小費都輕鬆", "支援所有貨幣的計算機"),
+                ("150 多種貨幣", "離線可用，無需帳號")],
     "zh": [("一扫即换算", "价签秒变你的货币"),
            ("平摊小费都轻松", "支持所有货币的计算器"),
            ("150 多种货币", "离线可用，无需账号")],
@@ -81,6 +100,8 @@ HEADLINES = {
 
 FONTS = ROOT / "CoinConvert" / "Fonts"
 CJK = {
+    "zh-Hant": ("/System/Library/Fonts/ヒラギノ角ゴシック W7.ttc", 0, "/System/Library/Fonts/ヒラギノ角ゴシック W4.ttc", 0),
+    "ru": ("/System/Library/Fonts/HelveticaNeue.ttc", 1, "/System/Library/Fonts/HelveticaNeue.ttc", 10),
     "ja": ("/System/Library/Fonts/ヒラギノ角ゴシック W7.ttc", 0, "/System/Library/Fonts/ヒラギノ角ゴシック W4.ttc", 0),
     "ko": ("/System/Library/Fonts/AppleSDGothicNeo.ttc", 6, "/System/Library/Fonts/AppleSDGothicNeo.ttc", 2),
     "zh": ("/System/Library/Fonts/Hiragino Sans GB.ttc", 2, "/System/Library/Fonts/Hiragino Sans GB.ttc", 0),
@@ -93,14 +114,15 @@ def run(*args):
 
 
 def capture(udid, locale, screen, path):
-    lang, region, home, travel, scan, calc = LOCALES[locale]
+    lang, region, home, travel = LOCALES[locale]
     run("xcrun", "simctl", "terminate", udid, BUNDLE)
-    args = ["xcrun", "simctl", "launch", udid, BUNDLE, "-hasOnboarded", "YES", "-demoPro", "YES",
+    args = ["xcrun", "simctl", "launch", udid, BUNDLE, "-hasOnboarded", "YES", "-demoPro", "YES", "-locationAskedAfterUpdate", "YES",
             "-AppleLanguages", f"({lang})", "-AppleLocale", region,
             "-com.coinconvert.sourcecurrency", travel, "-com.coinconvert.destinationcurrency", home,
             "-com.coinconvert.homecurrency", home]
-    args += {"scan": ["-demoMode", "scan", "-demoScanAmount", str(scan)],
-             "calculator": ["-demoCalculator", str(calc)],
+    args += {"scan": ["-demoMode", "scan", "-demoScanAmount", str(SCAN_AMOUNT),
+                      "-demoScanImage", str(SCAN_IMAGES[travel])],
+             "calculator": ["-demoCalculator", str(SCAN_AMOUNT)],
              "currencies": ["-demoPicker", "YES"]}[screen]
     run(*args)
     time.sleep(4.5)
@@ -162,7 +184,7 @@ def main():
         run("xcrun", "simctl", "install", cfg["udid"], str(APP))
         for locale in locales:
             lang = LOCALES[locale][0]
-            key = lang.split("-")[0]
+            key = lang if lang in HEADLINES else lang.split("-")[0]
             lines = HEADLINES.get(key, EN)
             for index, screen in enumerate(["scan", "calculator", "currencies"]):
                 raw = RAW / f"{device}-{locale}-{screen}.png"
