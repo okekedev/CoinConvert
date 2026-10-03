@@ -247,3 +247,112 @@ TAGWISE PRO
 使用条款：https://okekedev.github.io/CoinConvert/terms.html
 隐私政策：https://okekedev.github.io/CoinConvert/privacy.html""",
     "Real Time Currency Conversion 现已更名为 Tagwise：全新设计，自动设置当地货币，计算器和扫描器合为一屏，汇率更新更可靠。")
+
+# ---- Additional markets (listing only; the app UI falls back to English except zh-Hant) ----
+
+def _desc(how, s1, s2, s3, s4, s5, s6, pro_title, pro, terms, privacy):
+    return f"""{how}
+
+{s1}
+{s2}
+
+{s3}
+{s4}
+
+{s5}
+{s6}
+
+{pro_title}
+{pro}
+
+{terms}: https://okekedev.github.io/CoinConvert/terms.html
+{privacy}: https://okekedev.github.io/CoinConvert/privacy.html"""
+
+
+LOCALIZATIONS["zh-Hant"] = _e("Tagwise：掃描價格", "相機貨幣換算器",
+    "匯率,換算,台幣,港幣,美元,日圓,歐元,旅行,出國,計算機,菜單,購物,外幣,免稅",
+    "在旅行？把相機對準價格標籤或菜單，立刻看到換算成你貨幣的價格。離線可用，無需帳號，無廣告。",
+    _desc("把相機對準任何價格，立刻看到換算成你貨幣的金額。Tagwise 幫你讀取價格標籤、菜單和收據，不必手動輸入。",
+          "自動設定當地貨幣", "只需選擇一次本國貨幣。旅行時，Tagwise 會偵測所在國家並自動設定當地貨幣。",
+          "150 多種貨幣 · 離線可用", "匯率儲存在手機上，在飛機上或沒有網路時也能使用。",
+          "隱私", "掃描在裝置上完成，不會儲存或上傳任何照片。無需帳號，無廣告，無追蹤。",
+          "TAGWISE PRO", "每週或每月方案可免費試用 3 天，也可一次購買終身版。訂閱會自動續訂，除非在當期結束前至少 24 小時取消；可在帳號設定中管理。",
+          "使用條款", "隱私權政策"),
+    "Real Time Currency Conversion 現已更名為 Tagwise：全新設計、自動設定當地貨幣、計算機和掃描器整合在同一畫面，匯率更新更可靠。")
+
+LOCALIZATIONS["nl-NL"] = _e("Tagwise: scan prijzen", "Valuta omrekenen met camera",
+    "wisselkoers,valuta,euro,dollar,pond,reizen,vakantie,rekenmachine,menu,buitenland,koers,geld",
+    "Op reis? Richt je camera op een prijskaartje of menu en zie de prijs meteen in je eigen valuta. Offline, zonder account, zonder advertenties.",
+    _desc("Richt je camera op een prijs en zie hem meteen in je eigen valuta. Tagwise leest prijskaartjes, menu's en bonnetjes voor je, zonder typen.",
+          "LOKALE VALUTA AUTOMATISCH", "Kies één keer je eigen valuta. Op reis herkent Tagwise het land en zet de lokale valuta voor je klaar.",
+          "MEER DAN 150 VALUTA'S · WERKT OFFLINE", "Wisselkoersen staan op je telefoon, dus het werkt ook in het vliegtuig of zonder data.",
+          "PRIVÉ", "Scannen gebeurt op je toestel. Er worden geen foto's opgeslagen of geüpload. Geen account, geen advertenties, geen tracking.",
+          "TAGWISE PRO", "Probeer 3 dagen gratis met het week- of maandabonnement, of koop Levenslang in één keer. Abonnementen worden automatisch verlengd tenzij je ten minste 24 uur voor het einde van de periode opzegt; beheer ze in je accountinstellingen.",
+          "Voorwaarden", "Privacy"),
+    "Real Time Currency Conversion heet nu Tagwise: nieuw ontwerp, automatisch de lokale valuta, rekenmachine en scanner op één scherm, en wisselkoersen die goed bijwerken.")
+
+LOCALIZATIONS["ru"] = _e("Tagwise: сканер цен", "Конвертер валют по камере",
+    "курс,валюта,обмен,рубль,доллар,евро,путешествие,калькулятор,меню,заграница,деньги,туризм",
+    "В поездке? Наведите камеру на ценник или меню — и сразу увидите цену в своей валюте. Работает офлайн, без аккаунта и рекламы.",
+    _desc("Наведите камеру на любую цену — и сразу увидите её в своей валюте. Tagwise читает ценники, меню и чеки за вас, без ввода вручную.",
+          "МЕСТНАЯ ВАЛЮТА АВТОМАТИЧЕСКИ", "Выберите свою валюту один раз. В поездке Tagwise определяет страну и ставит местную валюту сам.",
+          "БОЛЕЕ 150 ВАЛЮТ · РАБОТАЕТ ОФЛАЙН", "Курсы хранятся на телефоне, поэтому всё работает в самолёте и без интернета.",
+          "КОНФИДЕНЦИАЛЬНОСТЬ", "Сканирование происходит на устройстве. Фото не сохраняются и не загружаются. Без аккаунта, рекламы и отслеживания.",
+          "TAGWISE PRO", "3 дня бесплатно в недельном или месячном плане, либо разовая покупка «Навсегда». Подписка продлевается автоматически, если не отменить её минимум за 24 часа до конца периода; управлять можно в настройках аккаунта.",
+          "Условия", "Конфиденциальность"),
+    "Real Time Currency Conversion теперь Tagwise: новый дизайн, автоматическая местная валюта, калькулятор и сканер на одном экране и надёжное обновление курсов.")
+
+LOCALIZATIONS["tr"] = _e("Tagwise: fiyatları tara", "Kameralı döviz çevirici",
+    "kur,döviz,lira,dolar,euro,seyahat,tatil,hesap makinesi,menü,yurt dışı,para,kambiyo",
+    "Seyahatte misiniz? Kamerayı etikete veya menüye tutun, fiyatı anında kendi para biriminizde görün. Çevrimdışı, hesapsız, reklamsız.",
+    _desc("Kamerayı herhangi bir fiyata tutun, anında kendi para biriminizde görün. Tagwise etiketleri, menüleri ve fişleri sizin için okur; yazmanıza gerek yok.",
+          "YEREL PARA BİRİMİ OTOMATİK", "Ana para biriminizi bir kez seçin. Seyahatte Tagwise ülkeyi algılar ve yerel para birimini sizin için ayarlar.",
+          "150'DEN FAZLA PARA BİRİMİ · ÇEVRİMDIŞI ÇALIŞIR", "Kurlar telefonunuzda saklanır; uçakta veya internet olmadan da çalışır.",
+          "GİZLİLİK", "Tarama cihazınızda yapılır. Hiçbir fotoğraf kaydedilmez veya yüklenmez. Hesap, reklam ve takip yok.",
+          "TAGWISE PRO", "Haftalık veya aylık planla 3 gün ücretsiz deneyin ya da Ömür Boyu'yu tek seferde satın alın. Abonelikler, dönem bitmeden en az 24 saat önce iptal edilmezse otomatik yenilenir; hesap ayarlarından yönetebilirsiniz.",
+          "Koşullar", "Gizlilik"),
+    "Real Time Currency Conversion artık Tagwise: yeni tasarım, otomatik yerel para birimi, tek ekranda hesap makinesi ve tarayıcı, güvenilir kur güncellemeleri.")
+
+LOCALIZATIONS["ar-SA"] = _e("Tagwise: امسح الأسعار", "محول العملات بالكاميرا",
+    "صرف,عملة,ريال,دولار,يورو,سفر,سياحة,حاسبة,قائمة,الخارج,أسعار,تحويل",
+    "مسافر؟ وجّه الكاميرا إلى بطاقة السعر أو قائمة الطعام وشاهد السعر فورًا بعملتك. يعمل دون اتصال، بلا حساب، بلا إعلانات.",
+    _desc("وجّه الكاميرا إلى أي سعر وشاهده فورًا بعملتك. يقرأ Tagwise بطاقات الأسعار وقوائم الطعام والإيصالات نيابةً عنك، دون كتابة.",
+          "العملة المحلية تلقائيًا", "اختر عملتك مرة واحدة. أثناء السفر يتعرف Tagwise على البلد ويضبط العملة المحلية لك.",
+          "أكثر من 150 عملة · يعمل دون اتصال", "تُحفظ أسعار الصرف على هاتفك، فيعمل على متن الطائرة أو دون بيانات.",
+          "الخصوصية", "يتم المسح على جهازك. لا تُحفظ أي صور ولا تُرفع. بلا حساب، بلا إعلانات، بلا تتبع.",
+          "TAGWISE PRO", "جرّب مجانًا لمدة 3 أيام مع الخطة الأسبوعية أو الشهرية، أو اشترِ مدى الحياة بدفعة واحدة. تتجدد الاشتراكات تلقائيًا ما لم تُلغَ قبل 24 ساعة على الأقل من نهاية الفترة؛ يمكنك إدارتها من إعدادات حسابك.",
+          "الشروط", "الخصوصية"),
+    "أصبح Real Time Currency Conversion الآن Tagwise: تصميم جديد، وعملة محلية تلقائية، والحاسبة والماسح في شاشة واحدة، وتحديث موثوق لأسعار الصرف.")
+
+LOCALIZATIONS["th"] = _e("Tagwise: สแกนราคา", "แปลงสกุลเงินด้วยกล้อง",
+    "อัตราแลกเปลี่ยน,สกุลเงิน,บาท,ดอลลาร์,ยูโร,เที่ยว,ต่างประเทศ,เครื่องคิดเลข,เมนู,แลกเงิน",
+    "เดินทางอยู่ใช่ไหม? ส่องกล้องไปที่ป้ายราคาหรือเมนู แล้วเห็นราคาเป็นสกุลเงินของคุณทันที ใช้ออฟไลน์ได้ ไม่ต้องมีบัญชี ไม่มีโฆษณา",
+    _desc("ส่องกล้องไปที่ราคาใดก็ได้ แล้วเห็นเป็นสกุลเงินของคุณทันที Tagwise อ่านป้ายราคา เมนู และใบเสร็จให้คุณ ไม่ต้องพิมพ์",
+          "ตั้งสกุลเงินท้องถิ่นอัตโนมัติ", "เลือกสกุลเงินหลักของคุณครั้งเดียว เมื่อเดินทาง Tagwise จะตรวจจับประเทศและตั้งสกุลเงินท้องถิ่นให้",
+          "กว่า 150 สกุลเงิน · ใช้ออฟไลน์ได้", "อัตราแลกเปลี่ยนเก็บไว้ในโทรศัพท์ จึงใช้ได้บนเครื่องบินหรือตอนไม่มีเน็ต",
+          "ความเป็นส่วนตัว", "การสแกนทำบนอุปกรณ์ ไม่มีการบันทึกหรืออัปโหลดรูปภาพ ไม่ต้องมีบัญชี ไม่มีโฆษณา ไม่มีการติดตาม",
+          "TAGWISE PRO", "ทดลองใช้ฟรี 3 วันกับแผนรายสัปดาห์หรือรายเดือน หรือซื้อแบบตลอดชีพครั้งเดียว การสมัครสมาชิกจะต่ออายุอัตโนมัติ เว้นแต่ยกเลิกอย่างน้อย 24 ชั่วโมงก่อนสิ้นสุดรอบ จัดการได้ในการตั้งค่าบัญชี",
+          "ข้อกำหนด", "ความเป็นส่วนตัว"),
+    "Real Time Currency Conversion เปลี่ยนเป็น Tagwise แล้ว: ดีไซน์ใหม่ ตั้งสกุลเงินท้องถิ่นอัตโนมัติ เครื่องคิดเลขและสแกนเนอร์ในหน้าเดียว และอัปเดตอัตราแลกเปลี่ยนได้แม่นยำขึ้น")
+
+LOCALIZATIONS["id"] = _e("Tagwise: pindai harga", "Konversi mata uang kamera",
+    "kurs,valas,rupiah,dolar,euro,liburan,wisata,kalkulator,menu,luar negeri,tukar,uang",
+    "Sedang bepergian? Arahkan kamera ke label harga atau menu dan lihat harganya langsung dalam mata uangmu. Offline, tanpa akun, tanpa iklan.",
+    _desc("Arahkan kamera ke harga apa pun dan langsung lihat dalam mata uangmu. Tagwise membaca label harga, menu, dan struk untukmu, tanpa mengetik.",
+          "MATA UANG LOKAL OTOMATIS", "Pilih mata uang utamamu sekali saja. Saat bepergian, Tagwise mendeteksi negara dan mengatur mata uang lokal untukmu.",
+          "150+ MATA UANG · BISA OFFLINE", "Kurs disimpan di ponsel, jadi tetap berfungsi di pesawat atau tanpa data.",
+          "PRIVASI", "Pemindaian terjadi di perangkat. Tidak ada foto yang disimpan atau diunggah. Tanpa akun, tanpa iklan, tanpa pelacakan.",
+          "TAGWISE PRO", "Coba gratis 3 hari dengan paket mingguan atau bulanan, atau beli Seumur Hidup sekali bayar. Langganan diperpanjang otomatis kecuali dibatalkan minimal 24 jam sebelum periode berakhir; kelola di pengaturan akun.",
+          "Ketentuan", "Privasi"),
+    "Real Time Currency Conversion kini menjadi Tagwise: desain baru, mata uang lokal otomatis, kalkulator dan pemindai dalam satu layar, dan kurs yang diperbarui dengan andal.")
+
+LOCALIZATIONS["pt-PT"] = _e("Tagwise: digitaliza preços", "Conversor de moedas",
+    "câmbio,moeda,euro,dólar,libra,viagem,férias,calculadora,câmara,menu,estrangeiro,taxa",
+    "Em viagem? Aponta a câmara a uma etiqueta ou menu e vê o preço logo na tua moeda. Sem ligação, sem conta, sem anúncios.",
+    _desc("Aponta a câmara a qualquer preço e vê-o logo na tua moeda. O Tagwise lê etiquetas, menus e talões por ti, sem escrever nada.",
+          "MOEDA LOCAL AUTOMÁTICA", "Escolhe a tua moeda uma vez. Em viagem, o Tagwise deteta o país e define a moeda local por ti.",
+          "MAIS DE 150 MOEDAS · FUNCIONA SEM LIGAÇÃO", "As taxas ficam guardadas no telemóvel, por isso funciona no avião ou sem dados.",
+          "PRIVACIDADE", "A digitalização é feita no dispositivo. Nenhuma foto é guardada ou enviada. Sem conta, sem anúncios, sem rastreio.",
+          "TAGWISE PRO", "Experimenta grátis durante 3 dias com o plano semanal ou mensal, ou compra o Vitalício com um único pagamento. As subscrições renovam automaticamente, salvo cancelamento pelo menos 24 horas antes do fim do período; gere-as nas definições da conta.",
+          "Termos", "Privacidade"),
+    "O Real Time Currency Conversion passa a chamar-se Tagwise: novo design, moeda local automática, calculadora e digitalizador num só ecrã e taxas que atualizam corretamente.")

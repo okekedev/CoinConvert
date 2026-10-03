@@ -127,7 +127,7 @@ extension Font {
 /// Launch arguments for App Store screenshots (debug builds only; inert in release):
 /// `-demoPro YES` unlock, `-demoMode scan`, `-demoScanAmount 24.5` printed tag instead of
 /// the camera, `-demoCalculator 86.4` preset calculator value, `-demoPicker YES` open the
-/// currency list.
+/// currency list, `-demoPaywall YES` open the Pro screen, `-demoOffer YES` then press close.
 enum ScreenshotDemo {
     #if DEBUG
     private static let defaults = UserDefaults.standard
@@ -136,6 +136,8 @@ enum ScreenshotDemo {
     static var scanAmount: Double? { positive(defaults.double(forKey: "demoScanAmount")) }
     static var calculatorValue: Double? { positive(defaults.double(forKey: "demoCalculator")) }
     static var opensPicker: Bool { defaults.bool(forKey: "demoPicker") }
+    static var opensPaywall: Bool { defaults.bool(forKey: "demoPaywall") }
+    static var opensOffer: Bool { defaults.bool(forKey: "demoOffer") }
     private static func positive(_ value: Double) -> Double? { value > 0 ? value : nil }
     #else
     static let isPro = false
@@ -143,5 +145,7 @@ enum ScreenshotDemo {
     static let scanAmount: Double? = nil
     static let calculatorValue: Double? = nil
     static let opensPicker = false
+    static let opensPaywall = false
+    static let opensOffer = false
     #endif
 }

@@ -29,6 +29,14 @@ L = {
     "ja": ("週間", "月間", "買い切り", "カメラで値札をスキャンして換算。", "Tagwiseをずっと使えます。"),
     "ko": ("주간", "월간", "평생", "카메라로 가격을 스캔하고 환산하세요.", "Tagwise를 평생 사용하세요."),
     "zh-Hans": ("每周", "每月", "终身", "用相机扫描价格并换算。", "永久解锁 Tagwise。"),
+    "zh-Hant": ("每週", "每月", "終身", "用相機掃描價格並換算。", "永久解鎖 Tagwise。"),
+    "nl-NL": ("Wekelijks", "Maandelijks", "Levenslang", "Scan prijzen met je camera en reken om.", "Ontgrendel Tagwise voor altijd."),
+    "ru": ("Неделя", "Месяц", "Навсегда", "Сканируйте цены камерой и конвертируйте.", "Tagwise навсегда."),
+    "tr": ("Haftalık", "Aylık", "Ömür Boyu", "Fiyatları kamerayla tarayıp çevirin.", "Tagwise'ın kilidini kalıcı açın."),
+    "ar-SA": ("أسبوعي", "شهري", "مدى الحياة", "امسح الأسعار بالكاميرا وحوّلها.", "افتح Tagwise مدى الحياة."),
+    "th": ("รายสัปดาห์", "รายเดือน", "ตลอดชีพ", "สแกนราคาด้วยกล้องแล้วแปลงสกุลเงิน", "ปลดล็อก Tagwise ตลอดไป"),
+    "id": ("Mingguan", "Bulanan", "Seumur Hidup", "Pindai harga dengan kamera dan konversi.", "Buka Tagwise selamanya."),
+    "pt-PT": ("Semanal", "Mensal", "Vitalício", "Digitaliza preços com a câmara e converte.", "Desbloqueia o Tagwise para sempre."),
 }
 
 

@@ -136,6 +136,26 @@ def catalog(table, extra_keys=()):
 
 
 untranslated = ["%@ %@", "%@%@", "%lld", "•", "≈ %@"]
-(ROOT / "Localizable.xcstrings").write_text(json.dumps(catalog(T, untranslated), ensure_ascii=False, indent=2))
-(ROOT / "InfoPlist.xcstrings").write_text(json.dumps(catalog(INFOPLIST), ensure_ascii=False, indent=2))
+
+import sys
+sys.path.insert(0, str(Path(__file__).parent))
+from more_languages import MORE, MORE_INFOPLIST  # nl, ru, tr, th, id, pt-PT
+
+
+def merge(cat, extra):
+    """Add languages kept as {lang: {key: value}} (more_languages.py)."""
+    for lang, values in extra.items():
+        for key, value in values.items():
+            cat["strings"][key].setdefault("localizations", {})[lang] = {
+                "stringUnit": {"state": "translated", "value": value}}
+    return cat
+
+
+(ROOT / "Localizable.xcstrings").write_text(json.dumps(merge(catalog(T, untranslated), MORE), ensure_ascii=False, indent=2))
+(ROOT / "InfoPlist.xcstrings").write_text(json.dumps(merge(catalog(INFOPLIST), MORE_INFOPLIST), ensure_ascii=False, indent=2))
 print(f"Localizable: {len(T)} strings x {len(LANGS)} languages; InfoPlist: {len(INFOPLIST)} keys")
+
+# Traditional Chinese is derived from Simplified with ICU's Hans-Hant transform.
+import subprocess
+subprocess.run(["swift", str(Path(__file__).with_name("add_hant.swift")),
+                str(ROOT / "Localizable.xcstrings"), str(ROOT / "InfoPlist.xcstrings")], check=True)

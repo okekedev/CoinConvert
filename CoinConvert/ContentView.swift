@@ -33,6 +33,7 @@ struct ContentView: View {
                     .onChange(of: storeManager.isPro) { _, isPro in
                         if isPro { showPaywall = false }
                     }
+                    .onAppear { if ScreenshotDemo.opensPaywall { showPaywall = true } }
             } else {
                 // Brief logo while the purchase check runs, so the app doesn't flicker.
                 LowPolyLogo(shimmer: false)
@@ -440,8 +441,9 @@ struct PaywallView: View {
         .background(AppTheme.background)
         .task(id: storeManager.products.map(\.id)) {
             await loadTrialEligibility()
+            if ScreenshotDemo.opensOffer && exitOfferAvailable { close() }
         }
-        .sheet(isPresented: $showExitOffer, onDismiss: {
+        .fullScreenCover(isPresented: $showExitOffer, onDismiss: {
             if !storeManager.isPro { onClose() }
         }) {
             if let regular = storeManager.lifetimeProduct, let offer = storeManager.lifetimeOfferProduct {
@@ -780,32 +782,43 @@ struct ExitOfferView: View {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 18) {
             Spacer()
 
+            LowPolyLogo()
+                .frame(width: 110, height: 110)
+
             Text("Wait — one-time offer")
-                .font(.app(15, .semibold))
+                .font(.app(14, .semibold))
                 .foregroundColor(AppTheme.darkGold)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(AppTheme.lightGold.opacity(0.35))
 
             Text("\(percentOff)% off Lifetime")
-                .font(.app(34, .bold))
+                .font(.app(36, .bold))
                 .foregroundColor(AppTheme.primaryText)
+                .multilineTextAlignment(.center)
 
             Text("Unlock camera scanning forever.\nPay once. No subscription.")
                 .font(.app(16))
                 .foregroundColor(AppTheme.secondaryText)
                 .multilineTextAlignment(.center)
 
-            HStack(alignment: .firstTextBaseline, spacing: 12) {
+            // Price card, styled like the plan rows on the Pro screen.
+            HStack(alignment: .firstTextBaseline, spacing: 14) {
                 Text(regular.displayPrice)
                     .font(.app(22))
                     .strikethrough()
                     .foregroundColor(AppTheme.secondaryText)
                 Text(offer.displayPrice)
-                    .font(.app(40, .bold))
+                    .font(.app(44, .bold))
                     .foregroundColor(AppTheme.primaryText)
             }
-            .padding(.top, 8)
+            .padding(.horizontal, 28)
+            .padding(.vertical, 14)
+            .overlay(Rectangle().stroke(AppTheme.gold, lineWidth: 2))
+            .padding(.top, 6)
 
             Spacer()
 
@@ -822,14 +835,7 @@ struct ExitOfferView: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
-                .background(
-                    LinearGradient(
-                        colors: [AppTheme.gold, AppTheme.darkGold],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .cornerRadius(AppTheme.cornerRadius)
+                .background(LinearGradient(colors: [AppTheme.gold, AppTheme.darkGold], startPoint: .top, endPoint: .bottom))
             }
             .disabled(storeManager.isLoading)
             .padding(.horizontal, 24)
@@ -844,7 +850,8 @@ struct ExitOfferView: View {
                 .padding(.bottom, 24)
         }
         .padding(.horizontal)
-        .presentationDetents([.large])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(AppTheme.background)
     }
 }
 

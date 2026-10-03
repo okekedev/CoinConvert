@@ -1,162 +1,288 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "CFBundleDisplayName": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "CFBundleDisplayName" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise"
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise"
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise"
           }
         }
       }
     },
-    "NSCameraUsageDescription": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise usa la cámara para leer precios y convertirlos."
+    "NSCameraUsageDescription" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise nutzt die Kamera, um Preise zu lesen und umzurechnen."
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise utilise l'appareil photo pour lire les prix et les convertir."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise usa la cámara para leer precios y convertirlos."
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise nutzt die Kamera, um Preise zu lesen und umzurechnen."
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise utilise l'appareil photo pour lire les prix et les convertir."
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise usa la fotocamera per leggere i prezzi e convertirli."
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise memakai kamera untuk membaca dan mengonversi harga."
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O Tagwise usa a câmera para ler preços e convertê-los."
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise usa la fotocamera per leggere i prezzi e convertirli."
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwiseは値札を読み取って換算するためにカメラを使います。"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwiseは値札を読み取って換算するためにカメラを使います。"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise는 가격을 읽고 환산하기 위해 카메라를 사용합니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise는 가격을 읽고 환산하기 위해 카메라를 사용합니다."
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise 使用相机读取并换算价格。"
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise gebruikt de camera om prijzen te lezen en om te rekenen."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Tagwise usa a câmera para ler preços e convertê-los."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Tagwise usa a câmara para ler preços e convertê-los."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise использует камеру, чтобы читать цены и пересчитывать их."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise ใช้กล้องเพื่ออ่านราคาและแปลงสกุลเงิน"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise, fiyatları okuyup çevirmek için kamerayı kullanır."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise 使用相机读取并换算价格。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise 使用相機讀取並換算價格。"
           }
         }
       }
     },
-    "NSLocationWhenInUseUsageDescription": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise usa tu ubicación para elegir la moneda local cuando viajas."
+    "NSLocationWhenInUseUsageDescription" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise nutzt deinen Standort, um auf Reisen die Landeswährung zu wählen."
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise utilise votre position pour choisir la devise locale en voyage."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise usa tu ubicación para elegir la moneda local cuando viajas."
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise nutzt deinen Standort, um auf Reisen die Landeswährung zu wählen."
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise utilise votre position pour choisir la devise locale en voyage."
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise usa la tua posizione per scegliere la valuta locale quando viaggi."
+        "id" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise memakai lokasimu untuk memilih mata uang lokal saat bepergian."
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O Tagwise usa sua localização para escolher a moeda local quando você viaja."
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise usa la tua posizione per scegliere la valuta locale quando viaggi."
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwiseは旅行先の現地通貨を選ぶために位置情報を使います。"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwiseは旅行先の現地通貨を選ぶために位置情報を使います。"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise는 여행 중 현지 통화를 선택하기 위해 위치를 사용합니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise는 여행 중 현지 통화를 선택하기 위해 위치를 사용합니다."
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tagwise 使用你的位置在旅行时选择当地货币。"
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise gebruikt je locatie om op reis de lokale valuta te kiezen."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Tagwise usa sua localização para escolher a moeda local quando você viaja."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Tagwise usa a tua localização para escolher a moeda local quando viajas."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise использует геопозицию, чтобы выбрать местную валюту в поездке."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise ใช้ตำแหน่งของคุณเพื่อเลือกสกุลเงินท้องถิ่นเมื่อเดินทาง"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise, seyahatte yerel para birimini seçmek için konumunuzu kullanır."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise 使用你的位置在旅行时选择当地货币。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagwise 使用你的位置在旅行時選擇當地貨幣。"
           }
         }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }
